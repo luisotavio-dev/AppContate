@@ -18,15 +18,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  List textfieldsStrings = [
-    "", //firstName
-    // "", //lastName
-    // "", //email
-    // "", //password
-    // "", //confirmPassword
-  ];
-
   final _formKey = GlobalKey<FormState>();
+  final _nomeController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +64,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: TextFieldWidget(
                           hintText: 'Seu nome',
                           defaultFocus: true,
+                          controller: _nomeController,
                           validator: (valuename) {
                             if (valuename.length <= 0) {
                               Util.buildSnackMessage(
@@ -81,12 +75,6 @@ class _LoginPageState extends State<LoginPage> {
                             }
                             return null;
                           },
-                          stringToEdit: 0,
-                          onChanged: ((value) {
-                            setState(() {
-                              textfieldsStrings[0] = value;
-                            });
-                          }),
                           size: size,
                           icon: Icons.person_outlined,
                           password: false,
@@ -136,7 +124,7 @@ class _LoginPageState extends State<LoginPage> {
       const uuid = Uuid();
 
       var usuario = Usuario()
-        ..nome = textfieldsStrings[0]
+        ..nome = _nomeController.text
         ..idUsuario = uuid.v1();
 
       box.add(usuario);

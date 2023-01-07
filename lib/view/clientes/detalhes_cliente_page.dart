@@ -4,17 +4,25 @@ import 'package:intl/intl.dart';
 import 'package:lancamento_contatos/model/cliente_model.dart';
 
 class DetalhesClientePage extends StatefulWidget {
-  const DetalhesClientePage({super.key});
+  final Cliente cliente;
+  const DetalhesClientePage(this.cliente, {super.key});
 
   @override
   State<DetalhesClientePage> createState() => _DetalhesClientePageState();
 }
 
 class _DetalhesClientePageState extends State<DetalhesClientePage> {
+  late Cliente cliente = Cliente();
+
+  @override
+  void initState() {
+    cliente = widget.cliente;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    final cliente = ModalRoute.of(context)!.settings.arguments as Cliente;
 
     return Scaffold(
       appBar: AppBar(
@@ -30,6 +38,26 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.pushNamed(
+                context,
+                '/persistir_cliente',
+                arguments: cliente,
+              ).then((value) {
+                if (value != null) {
+                  setState(() {
+                    cliente = value as Cliente;
+                  });
+                }
+              });
+            },
+            icon: const Icon(
+              Icons.edit_outlined,
+            ),
+          ),
+        ],
       ),
       body: Container(
         height: size.height,
@@ -148,6 +176,31 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                             Text(UtilBrasilFields.obterTelefone(cliente.telefone2!)),
+                          ],
+                        ),
+                      ),
+                    )
+                  : const Visibility(visible: false, child: SizedBox()),
+              cliente.observacoes != null && cliente.observacoes != ''
+                  ? Padding(
+                      padding: EdgeInsets.only(bottom: size.height * 0.01),
+                      child: Container(
+                        constraints: BoxConstraints(
+                          minHeight: size.height * 0.06,
+                        ),
+                        padding: const EdgeInsets.all(15),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Observações: ',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text(cliente.observacoes!.toString()),
                           ],
                         ),
                       ),

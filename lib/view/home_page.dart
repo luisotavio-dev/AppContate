@@ -140,7 +140,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           const DrawerHeader(
             decoration: BoxDecoration(color: Colors.white),
-            child: AppLogoWidget(alignment: MainAxisAlignment.start),
+            child: AppLogoWidget(),
           ),
           ListTile(
             leading: const Icon(Icons.cleaning_services_outlined),

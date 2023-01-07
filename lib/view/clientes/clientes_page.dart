@@ -35,8 +35,8 @@ class _ClientesPageState extends State<ClientesPage> {
       floatingActionButton: GradientFloatingActionButtonWidget(
         icon: Icons.add,
         text: 'Novo Cliente',
-        onTap: () => Navigator.pushNamed(context, '/novo_cliente').then((value) {
-          if (value == true) {
+        onTap: () => Navigator.pushNamed(context, '/persistir_cliente').then((value) {
+          if (value != null) {
             setState(() {});
           }
         }),
@@ -110,7 +110,9 @@ class _ClientesPageState extends State<ClientesPage> {
                                   context,
                                   '/detalhes_cliente',
                                   arguments: snapshot.data!.getAt(i),
-                                );
+                                ).then((value) {
+                                  setState(() {});
+                                });
                               },
                             );
                           },

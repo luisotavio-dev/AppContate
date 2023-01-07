@@ -24,13 +24,14 @@ class ClienteAdapter extends TypeAdapter<Cliente> {
       ..conta = fields[4] as int?
       ..dataLancamento = fields[5] as DateTime?
       ..telefone1 = fields[6] as String?
-      ..telefone2 = fields[7] as String?;
+      ..telefone2 = fields[7] as String?
+      ..observacoes = fields[8] as String?;
   }
 
   @override
   void write(BinaryWriter writer, Cliente obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.idCliente)
       ..writeByte(1)
@@ -46,7 +47,9 @@ class ClienteAdapter extends TypeAdapter<Cliente> {
       ..writeByte(6)
       ..write(obj.telefone1)
       ..writeByte(7)
-      ..write(obj.telefone2);
+      ..write(obj.telefone2)
+      ..writeByte(8)
+      ..write(obj.observacoes);
   }
 
   @override

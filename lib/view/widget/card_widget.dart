@@ -20,8 +20,8 @@ class CardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Container(
-      constraints: BoxConstraints(
-        minHeight: size.height * 0.06,
+      constraints: const BoxConstraints(
+        minHeight: 60,
       ),
       width: size.width * 0.9,
       margin: EdgeInsets.only(bottom: size.height * 0.01),

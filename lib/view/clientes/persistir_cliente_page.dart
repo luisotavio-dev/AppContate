@@ -11,25 +11,40 @@ import 'package:uuid/uuid.dart';
 
 import '../../util.dart';
 
-class NovoClientePage extends StatefulWidget {
-  const NovoClientePage({super.key});
+class PersistirClientePage extends StatefulWidget {
+  final Cliente? clienteEdicao;
+  const PersistirClientePage(this.clienteEdicao, {super.key});
 
   @override
-  State<NovoClientePage> createState() => _NovoClientePageState();
+  State<PersistirClientePage> createState() => _PersistirClientePageState();
 }
 
-class _NovoClientePageState extends State<NovoClientePage> {
+class _PersistirClientePageState extends State<PersistirClientePage> {
+  Cliente? get clienteEdicao => widget.clienteEdicao;
+
   final _nomeKey = GlobalKey<FormState>();
   final _contaKey = GlobalKey<FormState>();
   final _telefonePrincipalKey = GlobalKey<FormState>();
   final _telefoneAlternativoKey = GlobalKey<FormState>();
+  final _observacoesKey = GlobalKey<FormState>();
 
-  List textfieldsStrings = [
-    "", //nome
-    "", //conta
-    "", //telefone1
-    "", //telefone2
-  ];
+  final _nomeController = TextEditingController();
+  final _contaController = TextEditingController();
+  final _telefonePrincipalController = TextEditingController();
+  final _telefoneAlternativoController = TextEditingController();
+  final _observacoesController = TextEditingController();
+
+  @override
+  void initState() {
+    if (clienteEdicao != null) {
+      _nomeController.text = clienteEdicao!.nome!;
+      _contaController.text = clienteEdicao!.conta!.toString();
+      _telefonePrincipalController.text = UtilBrasilFields.obterTelefone(clienteEdicao!.telefone1!);
+      _telefoneAlternativoController.text = clienteEdicao!.telefone2 != null && clienteEdicao!.telefone2!.isNotEmpty ? UtilBrasilFields.obterTelefone(clienteEdicao!.telefone2!) : '';
+      _observacoesController.text = clienteEdicao!.observacoes ?? '';
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +56,7 @@ class _NovoClientePageState extends State<NovoClientePage> {
         centerTitle: true,
         elevation: 0,
         title: Text(
-          'Novo Cliente',
+          clienteEdicao != null ? 'Editar Cliente' : 'Novo Cliente',
           style: TextStyle(
             color: const Color(0xff1D1617),
             fontSize: size.height * 0.025,
@@ -72,6 +87,7 @@ class _NovoClientePageState extends State<NovoClientePage> {
                   Form(
                     child: TextFieldWidget(
                       hintText: 'Nome do cliente',
+                      controller: _nomeController,
                       defaultFocus: true,
                       validator: (valuename) {
                         if (valuename.length <= 0) {
@@ -83,12 +99,6 @@ class _NovoClientePageState extends State<NovoClientePage> {
                         }
                         return null;
                       },
-                      stringToEdit: 0,
-                      onChanged: ((value) {
-                        setState(() {
-                          textfieldsStrings[0] = value;
-                        });
-                      }),
                       size: size,
                       icon: Icons.person_outlined,
                       keyboardType: TextInputType.name,
@@ -106,6 +116,7 @@ class _NovoClientePageState extends State<NovoClientePage> {
                   Form(
                     child: TextFieldWidget(
                       hintText: 'Conta',
+                      controller: _contaController,
                       validator: (valuename) {
                         if (valuename.length <= 0) {
                           Util.buildSnackMessage(
@@ -116,12 +127,6 @@ class _NovoClientePageState extends State<NovoClientePage> {
                         }
                         return null;
                       },
-                      stringToEdit: 1,
-                      onChanged: ((value) {
-                        setState(() {
-                          textfieldsStrings[1] = value;
-                        });
-                      }),
                       size: size,
                       keyboardType: TextInputType.number,
                       inputFormatters: [
@@ -142,6 +147,7 @@ class _NovoClientePageState extends State<NovoClientePage> {
                   Form(
                     child: TextFieldWidget(
                       hintText: 'Telefone',
+                      controller: _telefonePrincipalController,
                       validator: (valuename) {
                         if (valuename.length <= 0) {
                           Util.buildSnackMessage(
@@ -152,12 +158,6 @@ class _NovoClientePageState extends State<NovoClientePage> {
                         }
                         return null;
                       },
-                      stringToEdit: 2,
-                      onChanged: ((value) {
-                        setState(() {
-                          textfieldsStrings[2] = value;
-                        });
-                      }),
                       size: size,
                       keyboardType: TextInputType.number,
                       inputFormatters: [
@@ -179,15 +179,10 @@ class _NovoClientePageState extends State<NovoClientePage> {
                   Form(
                     child: TextFieldWidget(
                       hintText: 'Telefone 2',
+                      controller: _telefoneAlternativoController,
                       validator: (valuename) {
                         return null;
                       },
-                      stringToEdit: 3,
-                      onChanged: ((value) {
-                        setState(() {
-                          textfieldsStrings[3] = value;
-                        });
-                      }),
                       size: size,
                       keyboardType: TextInputType.number,
                       inputFormatters: [
@@ -197,6 +192,27 @@ class _NovoClientePageState extends State<NovoClientePage> {
                       icon: Icons.phone_outlined,
                       password: false,
                       formKey: _telefoneAlternativoKey,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: size.height * 0.01),
+                    child: const Text(
+                      'Observações:',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Form(
+                    child: TextFieldWidget(
+                      hintText: 'Observações do Cliente',
+                      controller: _observacoesController,
+                      validator: (valuename) {
+                        return null;
+                      },
+                      multilines: true,
+                      size: size,
+                      icon: Icons.chat_outlined,
+                      password: false,
+                      formKey: _observacoesKey,
                     ),
                   ),
                 ],
@@ -217,12 +233,12 @@ class _NovoClientePageState extends State<NovoClientePage> {
                     if (_nomeKey.currentState!.validate()) {
                       if (_contaKey.currentState!.validate()) {
                         if (_telefonePrincipalKey.currentState!.validate()) {
-                          _salvar().then((_) {
+                          _salvar(clienteEdicao: clienteEdicao).then((clienteSalvo) {
                             Util.buildSnackMessage(
-                              'Cliente inserido!',
+                              'Cliente ${clienteEdicao != null ? 'Editado' : 'Inserido'}',
                               context,
                             );
-                            Navigator.pop(context, true);
+                            Navigator.pop(context, clienteSalvo);
                           }).onError((error, stackTrace) {
                             Util.buildSnackMessage(
                               error.toString(),
@@ -243,38 +259,59 @@ class _NovoClientePageState extends State<NovoClientePage> {
     );
   }
 
-  Future _salvar() async {
+  Future<Cliente> _salvar({Cliente? clienteEdicao}) async {
     Box<Cliente> box = Hive.box<Cliente>('clientes');
+    int contaInformada = int.parse(_contaController.text);
 
-    // Valida se não há nenhum cliente já cadastrado com essa conta
-    int contaInformada = int.parse(textfieldsStrings[1]);
+    Cliente cliente = Cliente();
 
-    bool contaJaCadastrada = false;
-    String nomeUsuarioRepetido = '';
-    for (var i = 0; i < box.length; i++) {
-      if (box.getAt(i)!.conta == contaInformada) {
-        contaJaCadastrada = true;
-        nomeUsuarioRepetido = box.getAt(i)!.nome!;
-        i = box.length;
+    // Caso esteja inserindo
+    if (clienteEdicao == null) {
+      // Valida se já existe algum cliente cadastrado com essa conta
+      bool contaJaCadastrada = false;
+      String nomeUsuarioRepetido = '';
+
+      for (var i = 0; i < box.length; i++) {
+        if (box.getAt(i)!.conta == contaInformada) {
+          contaJaCadastrada = true;
+          nomeUsuarioRepetido = box.getAt(i)!.nome!;
+          i = box.length;
+        }
       }
-    }
 
-    if (contaJaCadastrada) {
-      throw 'O usuário "$nomeUsuarioRepetido" já está cadastrado com esse número de conta.';
-    } else {
+      if (contaJaCadastrada) {
+        throw 'O usuário "$nomeUsuarioRepetido" já está cadastrado com esse número de conta.';
+      }
+
       var uuid = const Uuid();
-      Cliente cliente = Cliente()
+      cliente
         ..idCliente = uuid.v1()
         ..idUsuario = usuarioLogado.key
-        ..nome = textfieldsStrings[0]
-        ..agencia = 1864
-        ..conta = contaInformada
-        ..telefone1 = UtilBrasilFields.obterTelefone(textfieldsStrings[2], mascara: false)
-        ..telefone2 = textfieldsStrings[3] != null && textfieldsStrings[3] != '' ? UtilBrasilFields.obterTelefone(textfieldsStrings[3], mascara: false) : ''
         ..dataLancamento = DateTime.now();
-
-      await box.add(cliente);
-      await cliente.save();
+    } else {
+      cliente = clienteEdicao;
     }
+
+    cliente
+      ..nome = _nomeController.text
+      ..agencia = 1864
+      ..conta = contaInformada
+      ..telefone1 = UtilBrasilFields.obterTelefone(
+        _telefonePrincipalController.text,
+        mascara: false,
+      )
+      ..telefone2 = _telefoneAlternativoController.text.isNotEmpty
+          ? UtilBrasilFields.obterTelefone(
+              _telefoneAlternativoController.text,
+              mascara: false,
+            )
+          : ''
+      ..observacoes = _observacoesController.text;
+
+    if (clienteEdicao == null) {
+      await box.add(cliente);
+    }
+    await cliente.save();
+    return cliente;
   }
 }

@@ -21,18 +21,14 @@ class NovoAtendimentoPage extends StatefulWidget {
 }
 
 class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
+  int? idClienteSelecionado;
   final _clienteController = TextEditingController();
-  final _clienteKey = GlobalKey<FormState>();
-  final _descricaoKey = GlobalKey<FormState>();
+  DateTime? dataLancamento = DateTime.now();
+  final _descricaoController = TextEditingController();
   bool atendeu = false;
 
-  List textfieldsStrings = [
-    null, //dataLancamento
-    "", //cliente
-    "", //descricao
-    false, //atendeu
-    // "", //confirmPassword
-  ];
+  final _clienteKey = GlobalKey<FormState>();
+  final _descricaoKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -112,11 +108,6 @@ class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
                             }
                             return null;
                           },
-                          onDateSelected: (DateTime value) {
-                            setState(() {
-                              textfieldsStrings[0] = value;
-                            });
-                          },
                         ),
                       ),
                     ),
@@ -141,15 +132,9 @@ class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
                         }
                         return null;
                       },
-                      stringToEdit: 1,
                       readOnly: true,
                       onTap: () => _abrirPesquisaClientes(),
                       controller: _clienteController,
-                      onChanged: ((value) {
-                        setState(() {
-                          textfieldsStrings[1] = value;
-                        });
-                      }),
                       size: size,
                       icon: Icons.person_outlined,
                       password: false,
@@ -166,6 +151,7 @@ class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
                   Form(
                     child: TextFieldWidget(
                       hintText: 'Descrição',
+                      controller: _descricaoController,
                       validator: (valuename) {
                         if (valuename.length <= 0) {
                           Util.buildSnackMessage(
@@ -176,12 +162,6 @@ class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
                         }
                         return null;
                       },
-                      stringToEdit: 2,
-                      onChanged: ((value) {
-                        setState(() {
-                          textfieldsStrings[2] = value;
-                        });
-                      }),
                       multilines: true,
                       size: size,
                       icon: Icons.description,
@@ -197,13 +177,13 @@ class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
                         borderRadius: BorderRadius.all(Radius.circular(15)),
                       ),
                       child: CheckboxListTile(
-                        value: textfieldsStrings[3] as bool,
+                        value: atendeu,
                         controlAffinity: ListTileControlAffinity.leading,
                         contentPadding: EdgeInsets.zero,
                         title: const Text('Atendeu'),
                         onChanged: (bool? value) {
                           setState(() {
-                            textfieldsStrings[3] = value!;
+                            atendeu = value!;
                           });
                         },
                       ),
@@ -279,7 +259,7 @@ class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
           selectedItems: (value) {
             setState(() {
               _clienteController.text = value[0].name;
-              textfieldsStrings[1] = value[0].value;
+              idClienteSelecionado = value[0].value;
             });
           },
           enableMultipleSelection: false,
@@ -298,14 +278,14 @@ class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
 
     Cliente cliente = Cliente()
       ..nome = _clienteController.text
-      ..idCliente = textfieldsStrings[1];
+      ..idCliente = idClienteSelecionado.toString();
 
     Atendimento atendimento = Atendimento()
-      ..dataLancamento = textfieldsStrings[0] ?? DateTime.now()
+      ..dataLancamento = dataLancamento
       ..cliente = cliente
       ..idUsuario = usuarioLogado.idUsuario!
-      ..descricao = textfieldsStrings[2]
-      ..atendeu = textfieldsStrings[3] as bool;
+      ..descricao = _descricaoController.text.trim()
+      ..atendeu = atendeu;
 
     await box.add(atendimento);
     await atendimento.save();

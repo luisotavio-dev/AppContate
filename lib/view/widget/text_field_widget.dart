@@ -6,7 +6,6 @@ class TextFieldWidget extends StatelessWidget {
   final IconData? icon;
   final bool password;
   final FormFieldValidator validator;
-  final int stringToEdit;
   final Size size;
   final bool multilines;
   final bool readOnly;
@@ -17,7 +16,7 @@ class TextFieldWidget extends StatelessWidget {
   final TextInputType keyboardType;
   final TextEditingController? controller;
   final List<TextInputFormatter>? inputFormatters;
-  final Function(String) onChanged;
+  final Function(String)? onChanged;
 
   const TextFieldWidget({
     required this.hintText,
@@ -25,8 +24,7 @@ class TextFieldWidget extends StatelessWidget {
     this.password = false,
     this.controller,
     required this.validator,
-    required this.stringToEdit,
-    required this.onChanged,
+    this.onChanged,
     required this.size,
     this.readOnly = false,
     this.multilines = false,
@@ -57,7 +55,7 @@ class TextFieldWidget extends StatelessWidget {
           key: formKey,
           child: TextFormField(
             style: const TextStyle(color: Colors.black),
-            onChanged: (value) => onChanged(value),
+            onChanged: (value) => onChanged != null ? onChanged!(value) : null,
             controller: controller,
             validator: validator,
             autofocus: defaultFocus,

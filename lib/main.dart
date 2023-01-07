@@ -10,8 +10,9 @@ import 'package:lancamento_contatos/view/atendimentos/novo_atendimento_page.dart
 
 import 'package:lancamento_contatos/view/clientes/clientes_page.dart';
 import 'package:lancamento_contatos/view/clientes/detalhes_cliente_page.dart';
-import 'package:lancamento_contatos/view/clientes/novo_cliente_page.dart';
+import 'package:lancamento_contatos/view/clientes/persistir_cliente_page.dart';
 import 'package:lancamento_contatos/view/home_page.dart';
+import 'package:lancamento_contatos/view/initial_page.dart';
 import 'package:lancamento_contatos/view/login_page.dart';
 
 import 'package:lancamento_contatos/model/usuario_model.dart';
@@ -26,20 +27,7 @@ void main() async {
   Hive.registerAdapter<Usuario>(UsuarioAdapter());
   Hive.registerAdapter<Cliente>(ClienteAdapter());
   Hive.registerAdapter<Atendimento>(AtendimentoAdapter());
-
   await Hive.initFlutter();
-
-  // Verifica se o usuário já foi configurado
-  Box<Usuario> box = await Hive.openBox<Usuario>('usuarios');
-  if (box.isEmpty) {
-    paginaInicial = '/login';
-  } else {
-    usuarioLogado = box.getAt(0)!;
-    paginaInicial = '/home';
-  }
-
-  await Hive.openBox<Cliente>('clientes');
-  await Hive.openBox<Atendimento>('atendimentos');
 
   runApp(const MyApp());
 }
@@ -69,15 +57,23 @@ class MyApp extends StatelessWidget {
         textTheme: GoogleFonts.poppinsTextTheme(),
       ),
       initialRoute: paginaInicial,
-      routes: {
-        '/login': (context) => const LoginPage(),
-        '/home': (context) => const HomePage(),
-        '/clientes': (context) => const ClientesPage(),
-        '/detalhes_cliente': (context) => const DetalhesClientePage(),
-        '/novo_cliente': (context) => const NovoClientePage(),
-        '/atendimentos': (context) => const AtendimentosPage(),
-        '/detalhes_atendimento': (context) => const DetalhesAtendimentoPage(),
-        '/novo_atendimento': (context) => const NovoAtendimentoPage(),
+      onGenerateRoute: (RouteSettings settings) {
+        var routes = <String, WidgetBuilder>{
+          '/': (context) => const InitialPage(),
+          '/login': (context) => const LoginPage(),
+          '/home': (context) => const HomePage(),
+          '/clientes': (context) => const ClientesPage(),
+          "/detalhes_cliente": (context) => DetalhesClientePage(settings.arguments as Cliente),
+          "/persistir_cliente": (context) => PersistirClientePage(settings.arguments as Cliente?),
+          '/atendimentos': (context) => const AtendimentosPage(),
+          '/detalhes_atendimento': (context) => const DetalhesAtendimentoPage(),
+          '/novo_atendimento': (context) => const NovoAtendimentoPage(),
+        };
+        WidgetBuilder builder = routes[settings.name]!;
+        return MaterialPageRoute(
+          builder: (context) => builder(context),
+          settings: settings,
+        );
       },
     );
   }

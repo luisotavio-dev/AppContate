@@ -20,4 +20,6 @@ class Cliente extends HiveObject {
   String? telefone1;
   @HiveField(7)
   String? telefone2;
+  @HiveField(8)
+  String? observacoes;
 }
