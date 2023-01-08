@@ -23,8 +23,6 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:share_plus/share_plus.dart';
 
-import 'atendimentos_pdf_page.dart';
-
 class AtendimentosPage extends StatefulWidget {
   //Consultar atendimentos de um cliente específico
   final Cliente? cliente;
@@ -321,11 +319,12 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
     const String titulo = 'Relação de Atendimentos';
 
     List<List<String>> linhas = [];
-    linhas.add(<String>['Cliente', 'Data', 'Atendeu', 'Descrição']);
+    linhas.add(<String>['Cliente', 'Conta', 'Data', 'Atendeu', 'Descrição']);
 
     for (Atendimento atendimento in atendimentosRenderizando) {
       linhas.add(<String>[
         atendimento.cliente!.nome!,
+        atendimento.cliente!.conta!.toString(),
         dateTimeFormatter.format(atendimento.dataLancamento!),
         atendimento.atendeu! ? 'Sim' : 'Não',
         atendimento.descricao ?? '',
