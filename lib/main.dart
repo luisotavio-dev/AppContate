@@ -3,7 +3,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lancamento_contatos/colors.dart';
-import 'package:lancamento_contatos/globals.dart';
 import 'package:lancamento_contatos/view/atendimentos/atendimentos_page.dart';
 import 'package:lancamento_contatos/view/atendimentos/detalhes_atendimento_page.dart';
 import 'package:lancamento_contatos/view/atendimentos/novo_atendimento_page.dart';

@@ -1,6 +1,5 @@
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:lancamento_contatos/globals.dart';
 import 'package:lancamento_contatos/model/cliente_model.dart';
 import 'package:lancamento_contatos/view/widget/gradient_floating_action_button_widget.dart';

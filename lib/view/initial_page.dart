@@ -22,6 +22,7 @@ class _InitialPageState extends State<InitialPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // ignore: avoid_unnecessary_containers
       body: Container(
         // ignore: unnecessary_const
         child: const Center(child: const CircularProgressIndicator()),

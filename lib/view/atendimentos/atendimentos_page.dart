@@ -3,11 +3,8 @@
 import 'dart:io';
 
 import 'package:date_field/date_field.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
-import 'package:intl/intl.dart';
 import 'package:lancamento_contatos/colors.dart';
 import 'package:lancamento_contatos/globals.dart';
 import 'package:lancamento_contatos/model/atendimento_model.dart';
@@ -322,9 +319,14 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
     linhas.add(<String>['Cliente', 'Conta', 'Data', 'Atendeu', 'Descrição']);
 
     for (Atendimento atendimento in atendimentosRenderizando) {
+      if (atendimento.cliente!.conta == null) {
+        var dadosCliente = Hive.box<Cliente>('clientes').values.where((element) => element.idCliente == atendimento.cliente!.idCliente).toList();
+        atendimento.cliente = dadosCliente[0];
+      }
+
       linhas.add(<String>[
         atendimento.cliente!.nome!,
-        atendimento.cliente!.conta!.toString(),
+        (atendimento.cliente!.conta ?? '').toString(),
         dateTimeFormatter.format(atendimento.dataLancamento!),
         atendimento.atendeu! ? 'Sim' : 'Não',
         atendimento.descricao ?? '',

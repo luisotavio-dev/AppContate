@@ -3,7 +3,6 @@ import 'package:drop_down_list/drop_down_list.dart';
 import 'package:drop_down_list/model/selected_list_item.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:intl/intl.dart';
 import 'package:lancamento_contatos/colors.dart';
 import 'package:lancamento_contatos/globals.dart';
 import 'package:lancamento_contatos/model/atendimento_model.dart';
@@ -279,9 +278,8 @@ class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
   Future _salvar() async {
     var box = Hive.box<Atendimento>('atendimentos');
 
-    Cliente cliente = Cliente()
-      ..nome = _clienteController.text
-      ..idCliente = idClienteSelecionado.toString();
+    var dadosCliente = Hive.box<Cliente>('clientes').values.where((element) => element.idCliente == idClienteSelecionado).toList();
+    Cliente cliente = dadosCliente[0];
 
     Atendimento atendimento = Atendimento()
       ..dataLancamento = dataLancamento
