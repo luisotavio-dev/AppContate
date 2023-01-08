@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:lancamento_contatos/globals.dart';
 import 'package:lancamento_contatos/model/atendimento_model.dart';
 
 class DetalhesAtendimentoPage extends StatefulWidget {
@@ -57,7 +58,7 @@ class _DetalhesAtendimentoPageState extends State<DetalhesAtendimentoPage> {
                         'Lançado em: ',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      Text(DateFormat('dd/MM/yyyy HH:mm').format(atendimento.dataLancamento!)),
+                      Text(dateTimeFormatter.format(atendimento.dataLancamento!)),
                     ],
                   ),
                 ),

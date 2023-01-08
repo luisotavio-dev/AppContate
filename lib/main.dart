@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Contate+',
+      title: 'Contate',
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -65,7 +65,7 @@ class MyApp extends StatelessWidget {
           '/clientes': (context) => const ClientesPage(),
           "/detalhes_cliente": (context) => DetalhesClientePage(settings.arguments as Cliente),
           "/persistir_cliente": (context) => PersistirClientePage(settings.arguments as Cliente?),
-          '/atendimentos': (context) => const AtendimentosPage(),
+          '/atendimentos': (context) => AtendimentosPage(settings.arguments as Cliente?),
           '/detalhes_atendimento': (context) => const DetalhesAtendimentoPage(),
           '/novo_atendimento': (context) => const NovoAtendimentoPage(),
         };

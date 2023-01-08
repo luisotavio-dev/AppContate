@@ -14,6 +14,7 @@ class TextFieldWidget extends StatelessWidget {
   final Function? onTap;
   final String? initialValue;
   final TextInputType keyboardType;
+  final TextInputAction textInputAction;
   final TextEditingController? controller;
   final List<TextInputFormatter>? inputFormatters;
   final Function(String)? onChanged;
@@ -32,6 +33,7 @@ class TextFieldWidget extends StatelessWidget {
     this.onTap,
     this.initialValue,
     this.keyboardType = TextInputType.text,
+    this.textInputAction = TextInputAction.next,
     this.inputFormatters,
     required this.formKey,
     super.key,
@@ -40,7 +42,7 @@ class TextFieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: size.height * 0.01),
+      padding: EdgeInsets.symmetric(vertical: size.height * 0.01),
       child: Container(
         width: size.width * 0.9,
         constraints: BoxConstraints(
@@ -60,7 +62,7 @@ class TextFieldWidget extends StatelessWidget {
             validator: validator,
             autofocus: defaultFocus,
             readOnly: readOnly,
-            textInputAction: TextInputAction.next,
+            textInputAction: textInputAction,
             keyboardType: keyboardType,
             inputFormatters: inputFormatters,
             initialValue: initialValue,

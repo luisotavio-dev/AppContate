@@ -21,7 +21,7 @@ class NovoAtendimentoPage extends StatefulWidget {
 }
 
 class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
-  int? idClienteSelecionado;
+  String? idClienteSelecionado;
   final _clienteController = TextEditingController();
   DateTime? dataLancamento = DateTime.now();
   final _descricaoController = TextEditingController();
@@ -97,7 +97,7 @@ class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
                           lastDate: DateTime.now().add(const Duration(days: 365)),
                           initialDate: DateTime.now(),
                           autovalidateMode: AutovalidateMode.disabled,
-                          dateFormat: DateFormat('dd/MM/yyyy HH:mm'),
+                          dateFormat: dateTimeFormatter,
                           validator: (valuename) {
                             if (valuename == null) {
                               Util.buildSnackMessage(
@@ -167,6 +167,8 @@ class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
                       icon: Icons.description,
                       password: false,
                       formKey: _descricaoKey,
+                      textInputAction: TextInputAction.newline,
+                      keyboardType: TextInputType.multiline,
                     ),
                   ),
                   Padding(
@@ -194,8 +196,9 @@ class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
             ),
             Align(
               alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 15),
+              child: Container(
+                color: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 15),
                 child: ButtonWidget(
                   text: 'Salvar',
                   backColor: gradient,
@@ -259,7 +262,7 @@ class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
           selectedItems: (value) {
             setState(() {
               _clienteController.text = value[0].name;
-              idClienteSelecionado = value[0].value;
+              idClienteSelecionado = value[0].value.toString();
             });
           },
           enableMultipleSelection: false,

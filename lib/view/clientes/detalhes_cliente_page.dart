@@ -1,7 +1,9 @@
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:lancamento_contatos/globals.dart';
 import 'package:lancamento_contatos/model/cliente_model.dart';
+import 'package:lancamento_contatos/view/widget/gradient_floating_action_button_widget.dart';
 
 class DetalhesClientePage extends StatefulWidget {
   final Cliente cliente;
@@ -108,7 +110,7 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
                         'Lançado em: ',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      Text(DateFormat('dd/MM/yyyy HH:mm').format(cliente.dataLancamento!)),
+                      Text(dateTimeFormatter.format(cliente.dataLancamento!)),
                     ],
                   ),
                 ),
@@ -164,6 +166,7 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
                         constraints: BoxConstraints(
                           minHeight: size.height * 0.06,
                         ),
+                        width: size.width * 0.9,
                         padding: const EdgeInsets.all(15),
                         decoration: const BoxDecoration(
                           color: Colors.white,
@@ -188,6 +191,7 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
                         constraints: BoxConstraints(
                           minHeight: size.height * 0.06,
                         ),
+                        width: size.width * 0.9,
                         padding: const EdgeInsets.all(15),
                         decoration: const BoxDecoration(
                           color: Colors.white,
@@ -209,6 +213,17 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
             ],
           ),
         ),
+      ),
+      floatingActionButton: GradientFloatingActionButtonWidget(
+        icon: Icons.chat_outlined,
+        text: 'Atendimentos',
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            '/atendimentos',
+            arguments: cliente,
+          );
+        },
       ),
     );
   }

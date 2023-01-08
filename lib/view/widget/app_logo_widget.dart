@@ -10,31 +10,12 @@ class AppLogoWidget extends StatelessWidget {
     return Column(
       mainAxisAlignment: alignment,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Contate',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: size.height * 0.035,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              '+',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
-                fontSize: size.height * 0.045,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
+        Image.asset('assets/img/logomarca.png', height: 70),
+        const SizedBox(height: 5),
         Text(
           'Gestão de Atendimentos',
           style: TextStyle(
-            color: Colors.black,
+            color: Colors.black45,
             fontSize: size.height * 0.016,
           ),
         ),
