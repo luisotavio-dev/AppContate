@@ -376,6 +376,13 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
                 color: PdfColor.fromHex('#747474'),
               ),
             ),
+            columnWidths: const {
+              0: pw.FixedColumnWidth(3),
+              1: pw.FixedColumnWidth(1.5),
+              2: pw.FixedColumnWidth(2),
+              3: pw.FixedColumnWidth(1.2),
+              4: pw.FixedColumnWidth(4),
+            },
           ),
           pw.SizedBox(height: 8),
           pw.Text(
