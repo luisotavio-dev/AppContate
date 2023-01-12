@@ -8,6 +8,7 @@ import 'package:lancamento_contatos/model/atendimento_model.dart';
 import 'package:lancamento_contatos/model/cliente_model.dart';
 import 'package:lancamento_contatos/model/item_menu_model.dart';
 import 'package:lancamento_contatos/model/usuario_model.dart';
+import 'package:lancamento_contatos/theme.dart';
 import 'package:lancamento_contatos/view/widget/app_logo_widget.dart';
 import 'package:lancamento_contatos/view/widget/card_widget.dart';
 
@@ -25,15 +26,20 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<ItemMenu> itensMenu = [
     ItemMenu(
-      icon: Icons.person_outline_rounded,
-      nome: 'Clientes',
-      badge: 80,
-      onClickRoute: '/clientes',
+      icon: Icons.calendar_month_outlined,
+      nome: 'Agendamentos',
+      onClickRoute: '/agendamentos',
     ),
     ItemMenu(
       icon: Icons.phone_outlined,
       nome: 'Atendimentos',
       onClickRoute: '/atendimentos',
+    ),
+    ItemMenu(
+      icon: Icons.person_outline_rounded,
+      nome: 'Clientes',
+      badge: 80,
+      onClickRoute: '/clientes',
     ),
   ];
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -47,9 +53,9 @@ class _HomePageState extends State<HomePage> {
       body: Center(
         child: Container(
           height: size.height,
-          width: size.height,
+          width: size.width,
           decoration: const BoxDecoration(
-            color: Color(0xFFfafafa),
+            color: backgroundColor,
           ),
           child: Stack(
             children: [
@@ -64,10 +70,7 @@ class _HomePageState extends State<HomePage> {
               ),
               SafeArea(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    vertical: size.height * 0.02,
-                    horizontal: size.height * 0.03,
-                  ),
+                  padding: defaultPagePadding,
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
@@ -154,9 +157,12 @@ class _HomePageState extends State<HomePage> {
           Expanded(
             child: Column(
               children: [
-                const DrawerHeader(
-                  decoration: BoxDecoration(color: Colors.white),
-                  child: AppLogoWidget(),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: const DrawerHeader(
+                    decoration: BoxDecoration(color: Colors.white),
+                    child: AppLogoWidget(),
+                  ),
                 ),
                 ListTile(
                   leading: const Icon(Icons.cleaning_services_outlined),

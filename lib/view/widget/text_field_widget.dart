@@ -10,7 +10,7 @@ class TextFieldWidget extends StatelessWidget {
   final bool multilines;
   final bool readOnly;
   final bool defaultFocus;
-  final Key formKey;
+  final Key? formKey;
   final Function? onTap;
   final String? initialValue;
   final TextInputType keyboardType;
@@ -18,6 +18,7 @@ class TextFieldWidget extends StatelessWidget {
   final TextEditingController? controller;
   final List<TextInputFormatter>? inputFormatters;
   final Function(String)? onChanged;
+  final Function(String)? onSubmit;
 
   const TextFieldWidget({
     required this.hintText,
@@ -31,23 +32,22 @@ class TextFieldWidget extends StatelessWidget {
     this.multilines = false,
     this.defaultFocus = false,
     this.onTap,
+    this.onSubmit,
     this.initialValue,
     this.keyboardType = TextInputType.text,
     this.textInputAction = TextInputAction.next,
     this.inputFormatters,
-    required this.formKey,
+    this.formKey,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: size.height * 0.01),
+      padding: EdgeInsets.only(bottom: size.height * 0.01),
       child: Container(
-        width: size.width * 0.9,
         constraints: BoxConstraints(
           minHeight: size.height * 0.06,
-          maxWidth: size.width * 0.9,
         ),
         decoration: const BoxDecoration(
           color: Colors.white,
@@ -68,6 +68,7 @@ class TextFieldWidget extends StatelessWidget {
             initialValue: initialValue,
             maxLines: multilines ? null : 1,
             onTap: onTap != null ? () => onTap!() : null,
+            onFieldSubmitted: onSubmit != null ? (value) => onSubmit!(value) : null,
             decoration: InputDecoration(
               errorStyle: const TextStyle(height: 0),
               hintStyle: const TextStyle(color: Color(0xffADA4A5)),

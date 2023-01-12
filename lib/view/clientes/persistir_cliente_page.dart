@@ -2,7 +2,7 @@ import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
-import 'package:lancamento_contatos/colors.dart';
+import 'package:lancamento_contatos/theme.dart';
 import 'package:lancamento_contatos/globals.dart';
 import 'package:lancamento_contatos/model/cliente_model.dart';
 import 'package:lancamento_contatos/view/widget/button_widget.dart';
@@ -51,7 +51,7 @@ class _PersistirClientePageState extends State<PersistirClientePage> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFFfafafa),
+        backgroundColor: backgroundColor,
         foregroundColor: Colors.black,
         centerTitle: true,
         elevation: 0,
@@ -63,201 +63,201 @@ class _PersistirClientePageState extends State<PersistirClientePage> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        leadingWidth: defaultLeadingPadding,
       ),
       body: Container(
         height: size.height,
-        width: size.height,
+        width: size.width,
+        padding: defaultPagePadding,
         decoration: const BoxDecoration(
-          color: Color(0xFFfafafa),
+          color: backgroundColor,
         ),
         child: Stack(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 24.0, right: 25.0, top: 15.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(bottom: size.height * 0.01),
-                      child: const Text(
-                        'Nome:',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+            SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 15),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: size.height * 0.01),
+                    child: const Text(
+                      'Nome:',
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    Form(
-                      child: TextFieldWidget(
-                        hintText: 'Nome do cliente',
-                        controller: _nomeController,
-                        defaultFocus: true,
-                        validator: (valuename) {
-                          if (valuename.length <= 0) {
-                            Util.buildSnackMessage(
-                              'Informe o cliente',
-                              context,
-                            );
-                            return '';
-                          }
-                          return null;
-                        },
-                        size: size,
-                        icon: Icons.person_outlined,
-                        keyboardType: TextInputType.name,
-                        password: false,
-                        formKey: _nomeKey,
-                      ),
+                  ),
+                  Form(
+                    child: TextFieldWidget(
+                      hintText: 'Nome do cliente',
+                      controller: _nomeController,
+                      defaultFocus: true,
+                      validator: (valuename) {
+                        if (valuename.length <= 0) {
+                          Util.buildSnackMessage(
+                            'Informe o cliente',
+                            context,
+                          );
+                          return '';
+                        }
+                        return null;
+                      },
+                      size: size,
+                      icon: Icons.person_outlined,
+                      keyboardType: TextInputType.name,
+                      password: false,
+                      formKey: _nomeKey,
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: size.height * 0.01),
-                      child: const Text(
-                        'Dados da conta:',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: size.height * 0.01),
+                    child: const Text(
+                      'Dados da conta:',
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    Form(
-                      child: TextFieldWidget(
-                        hintText: 'Conta',
-                        controller: _contaController,
-                        validator: (valuename) {
-                          if (valuename.length <= 0) {
-                            Util.buildSnackMessage(
-                              'Informe a conta',
-                              context,
-                            );
-                            return '';
-                          }
-                          return null;
-                        },
-                        size: size,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                        ],
-                        icon: Icons.account_balance_wallet_outlined,
-                        password: false,
-                        formKey: _contaKey,
-                      ),
+                  ),
+                  Form(
+                    child: TextFieldWidget(
+                      hintText: 'Conta',
+                      controller: _contaController,
+                      validator: (valuename) {
+                        if (valuename.length <= 0) {
+                          Util.buildSnackMessage(
+                            'Informe a conta',
+                            context,
+                          );
+                          return '';
+                        }
+                        return null;
+                      },
+                      size: size,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
+                      icon: Icons.account_balance_wallet_outlined,
+                      password: false,
+                      formKey: _contaKey,
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: size.height * 0.01),
-                      child: const Text(
-                        'Telefone Principal:',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: size.height * 0.01),
+                    child: const Text(
+                      'Telefone Principal:',
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    Form(
-                      child: TextFieldWidget(
-                        hintText: 'Telefone',
-                        controller: _telefonePrincipalController,
-                        validator: (valuename) {
-                          if (valuename.length <= 0) {
-                            Util.buildSnackMessage(
-                              'Informe o telefone principal',
-                              context,
-                            );
-                            return '';
-                          }
+                  ),
+                  Form(
+                    child: TextFieldWidget(
+                      hintText: 'Telefone',
+                      controller: _telefonePrincipalController,
+                      validator: (valuename) {
+                        if (valuename.length <= 0) {
+                          Util.buildSnackMessage(
+                            'Informe o telefone principal',
+                            context,
+                          );
+                          return '';
+                        }
 
-                          try {
-                            var numero = UtilBrasilFields.obterTelefone(valuename, mascara: false);
-                            if (numero.length < 10 || numero.length > 11) {
-                              Util.buildSnackMessage(
-                                'O telefone principal informado é inválido.',
-                                context,
-                              );
-                              return '';
-                            }
-                          } catch (e) {
+                        try {
+                          var numero = UtilBrasilFields.obterTelefone(valuename, mascara: false);
+                          if (numero.length < 10 || numero.length > 11) {
                             Util.buildSnackMessage(
                               'O telefone principal informado é inválido.',
                               context,
                             );
                             return '';
                           }
+                        } catch (e) {
+                          Util.buildSnackMessage(
+                            'O telefone principal informado é inválido.',
+                            context,
+                          );
+                          return '';
+                        }
 
-                          return null;
-                        },
-                        size: size,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          TelefoneInputFormatter(),
-                        ],
-                        icon: Icons.phone_outlined,
-                        password: false,
-                        formKey: _telefonePrincipalKey,
-                      ),
+                        return null;
+                      },
+                      size: size,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        TelefoneInputFormatter(),
+                      ],
+                      icon: Icons.phone_outlined,
+                      password: false,
+                      formKey: _telefonePrincipalKey,
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: size.height * 0.01),
-                      child: const Text(
-                        'Telefone Alternativo:',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: size.height * 0.01),
+                    child: const Text(
+                      'Telefone Alternativo:',
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    Form(
-                      child: TextFieldWidget(
-                        hintText: 'Telefone 2',
-                        controller: _telefoneAlternativoController,
-                        validator: (valuename) {
-                          if (valuename == '') return null;
+                  ),
+                  Form(
+                    child: TextFieldWidget(
+                      hintText: 'Telefone 2',
+                      controller: _telefoneAlternativoController,
+                      validator: (valuename) {
+                        if (valuename == '') return null;
 
-                          try {
-                            var numero = UtilBrasilFields.obterTelefone(valuename, mascara: false);
-                            if (numero.length < 10 || numero.length > 11) {
-                              Util.buildSnackMessage(
-                                'O telefone alternativo informado é inválido.',
-                                context,
-                              );
-                              return '';
-                            }
-                          } catch (e) {
+                        try {
+                          var numero = UtilBrasilFields.obterTelefone(valuename, mascara: false);
+                          if (numero.length < 10 || numero.length > 11) {
                             Util.buildSnackMessage(
                               'O telefone alternativo informado é inválido.',
                               context,
                             );
                             return '';
                           }
+                        } catch (e) {
+                          Util.buildSnackMessage(
+                            'O telefone alternativo informado é inválido.',
+                            context,
+                          );
+                          return '';
+                        }
 
-                          return null;
-                        },
-                        size: size,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          TelefoneInputFormatter(),
-                        ],
-                        icon: Icons.phone_outlined,
-                        password: false,
-                        formKey: _telefoneAlternativoKey,
-                      ),
+                        return null;
+                      },
+                      size: size,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        TelefoneInputFormatter(),
+                      ],
+                      icon: Icons.phone_outlined,
+                      password: false,
+                      formKey: _telefoneAlternativoKey,
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: size.height * 0.01),
-                      child: const Text(
-                        'Observações:',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: size.height * 0.01),
+                    child: const Text(
+                      'Observações:',
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    Form(
-                      child: TextFieldWidget(
-                        hintText: 'Observações do Cliente',
-                        controller: _observacoesController,
-                        validator: (valuename) {
-                          return null;
-                        },
-                        multilines: true,
-                        size: size,
-                        icon: Icons.chat_outlined,
-                        password: false,
-                        formKey: _observacoesKey,
-                        textInputAction: TextInputAction.newline,
-                        keyboardType: TextInputType.multiline,
-                      ),
+                  ),
+                  Form(
+                    child: TextFieldWidget(
+                      hintText: 'Observações do Cliente',
+                      controller: _observacoesController,
+                      validator: (valuename) {
+                        return null;
+                      },
+                      multilines: true,
+                      size: size,
+                      icon: Icons.chat_outlined,
+                      password: false,
+                      formKey: _observacoesKey,
+                      textInputAction: TextInputAction.newline,
+                      keyboardType: TextInputType.multiline,
                     ),
-                    const SizedBox(height: 100),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 100),
+                ],
               ),
             ),
             Align(

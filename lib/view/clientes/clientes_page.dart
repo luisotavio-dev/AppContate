@@ -3,8 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:lancamento_contatos/model/cliente_model.dart';
+import 'package:lancamento_contatos/theme.dart';
 import 'package:lancamento_contatos/view/widget/card_widget.dart';
 import 'package:lancamento_contatos/view/widget/gradient_floating_action_button_widget.dart';
+import 'package:lancamento_contatos/view/widget/text_field_widget.dart';
 
 class ClientesPage extends StatefulWidget {
   const ClientesPage({super.key});
@@ -14,12 +16,14 @@ class ClientesPage extends StatefulWidget {
 }
 
 class _ClientesPageState extends State<ClientesPage> {
+  final _pesquisaController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFFfafafa),
+        backgroundColor: backgroundColor,
         foregroundColor: Colors.black,
         centerTitle: true,
         elevation: 0,
@@ -31,6 +35,7 @@ class _ClientesPageState extends State<ClientesPage> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        leadingWidth: defaultLeadingPadding,
       ),
       floatingActionButton: GradientFloatingActionButtonWidget(
         icon: Icons.add,
@@ -44,102 +49,122 @@ class _ClientesPageState extends State<ClientesPage> {
       body: Center(
         child: Container(
           height: size.height,
-          width: size.height,
+          width: size.width,
           decoration: const BoxDecoration(
-            color: Color(0xFFfafafa),
+            color: backgroundColor,
           ),
-          child: FutureBuilder<Box<Cliente>>(
-            future: _getDados(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                if (snapshot.hasError) {
-                  return Center(child: Text(snapshot.error.toString()));
-                }
+          padding: defaultPagePadding,
+          child: Column(
+            children: [
+              TextFieldWidget(
+                hintText: 'Pesquisar',
+                validator: (valuename) {
+                  return null;
+                },
+                controller: _pesquisaController,
+                defaultFocus: true,
+                textInputAction: TextInputAction.search,
+                size: size,
+                icon: Icons.search_outlined,
+                onChanged: (value) => setState(() {}),
+              ),
+              Expanded(
+                child: FutureBuilder<List<Cliente>>(
+                  future: _getDados(pesquisa: _pesquisaController.text),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      if (snapshot.hasError) {
+                        return Center(child: Text(snapshot.error.toString()));
+                      }
 
-                if (!snapshot.hasData || snapshot.hasData && snapshot.data!.length <= 0) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: const [
-                      Icon(
-                        Icons.clear,
-                        size: 40,
-                      ),
-                      SizedBox(height: 10),
-                      Text('Não há dados para exibir.'),
-                    ],
-                  );
-                }
+                      if (!snapshot.hasData || snapshot.hasData && snapshot.data!.isEmpty) {
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: const [
+                            Icon(
+                              Icons.clear,
+                              size: 40,
+                            ),
+                            SizedBox(height: 10),
+                            Text('Não há dados para exibir.'),
+                          ],
+                        );
+                      }
 
-                return Padding(
-                  padding: EdgeInsets.symmetric(
-                    vertical: size.height * 0.02,
-                    horizontal: size.height * 0.03,
-                  ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        ListView.builder(
-                          padding: EdgeInsets.zero,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, i) {
-                            Cliente cliente = snapshot.data!.getAt(i)!;
+                      return SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            ListView.builder(
+                              padding: EdgeInsets.zero,
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, i) {
+                                Cliente cliente = snapshot.data![i];
 
-                            return CardWidget(
-                              title: Container(
-                                margin: const EdgeInsets.only(right: 15),
-                                padding: const EdgeInsets.symmetric(vertical: 10),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    Text(
-                                      cliente.nome!,
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                return CardWidget(
+                                  title: Container(
+                                    margin: const EdgeInsets.only(right: 15),
+                                    padding: const EdgeInsets.symmetric(vertical: 10),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Text(
+                                          cliente.nome!,
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text('Conta: ${cliente.conta!}'),
+                                      ],
                                     ),
-                                    Text('Conta: ${cliente.conta!}'),
-                                  ],
-                                ),
-                              ),
-                              onPressed: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  '/detalhes_cliente',
-                                  arguments: snapshot.data!.getAt(i),
-                                ).then((value) {
-                                  setState(() {});
-                                });
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/detalhes_cliente',
+                                      arguments: cliente,
+                                    ).then((value) {
+                                      setState(() {});
+                                    });
+                                  },
+                                );
                               },
-                            );
-                          },
-                          itemCount: snapshot.data!.length,
+                              itemCount: snapshot.data!.length,
+                            ),
+                            SizedBox(height: size.height * 0.02),
+                          ],
                         ),
-                        SizedBox(height: size.height * 0.02),
-                      ],
-                    ),
-                  ),
-                );
-              } else {
-                return const Center(child: CircularProgressIndicator());
-              }
-            },
+                      );
+                    } else {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                  },
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Future<Box<Cliente>> _getDados() async {
+  Future<List<Cliente>> _getDados({String pesquisa = ''}) async {
     String boxName = 'clientes';
+    List<Cliente> clientes = <Cliente>[];
 
     if (Hive.isBoxOpen(boxName)) {
-      return Hive.box<Cliente>(boxName);
+      clientes = Hive.box<Cliente>(boxName).values.toList();
+      clientes.sort((a, b) => a.nome!.compareTo(b.nome!));
     } else {
-      return Hive.openBox(boxName);
+      var box = await Hive.openBox<Cliente>(boxName);
+      clientes = box.values.toList();
+      clientes.sort((a, b) => a.nome!.compareTo(b.nome!));
     }
+
+    if (pesquisa == '') return clientes;
+    return clientes.where((element) => element.nome!.contains(pesquisa) || element.conta!.toString().contains(pesquisa)).toList();
   }
 }

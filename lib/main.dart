@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:lancamento_contatos/colors.dart';
+import 'package:lancamento_contatos/theme.dart';
+import 'package:lancamento_contatos/model/agendamento_model.dart';
+import 'package:lancamento_contatos/view/agendamentos/agendamentos_page.dart';
+import 'package:lancamento_contatos/view/agendamentos/persistir_agendamento_page.dart';
 import 'package:lancamento_contatos/view/atendimentos/atendimentos_page.dart';
 import 'package:lancamento_contatos/view/atendimentos/detalhes_atendimento_page.dart';
 import 'package:lancamento_contatos/view/atendimentos/novo_atendimento_page.dart';
@@ -26,6 +29,7 @@ void main() async {
   Hive.registerAdapter<Usuario>(UsuarioAdapter());
   Hive.registerAdapter<Cliente>(ClienteAdapter());
   Hive.registerAdapter<Atendimento>(AtendimentoAdapter());
+  Hive.registerAdapter<Agendamento>(AgendamentoAdapter());
   await Hive.initFlutter();
 
   runApp(const MyApp());
@@ -50,7 +54,7 @@ class MyApp extends StatelessWidget {
           child: child!,
         );
       },
-      supportedLocales: const [Locale('pt')],
+      supportedLocales: const [Locale('pt', 'BR')],
       theme: ThemeData(
         primarySwatch: primaryColor,
         textTheme: GoogleFonts.poppinsTextTheme(),
@@ -66,7 +70,9 @@ class MyApp extends StatelessWidget {
           "/persistir_cliente": (context) => PersistirClientePage(settings.arguments as Cliente?),
           '/atendimentos': (context) => AtendimentosPage(settings.arguments as Cliente?),
           '/detalhes_atendimento': (context) => const DetalhesAtendimentoPage(),
-          '/novo_atendimento': (context) => const NovoAtendimentoPage(),
+          '/novo_atendimento': (context) => NovoAtendimentoPage(settings.arguments as Cliente?),
+          '/agendamentos': (context) => const AgendamentosPage(),
+          '/persistir_agendamento': (context) => const PersistirAgendamentoPage(),
         };
         WidgetBuilder builder = routes[settings.name]!;
         return MaterialPageRoute(

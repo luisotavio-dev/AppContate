@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 const List<Color> gradient = [Color(0xFF4e54c8), Color(0xFF8f94fb)];
+const Color backgroundColor = Color(0xFFfafafa);
 
 Map<int, Color> primaryColorMap = {
   50: const Color.fromRGBO(76, 73, 255, .1),
@@ -16,3 +17,6 @@ Map<int, Color> primaryColorMap = {
 };
 
 MaterialColor primaryColor = MaterialColor(0xFF4c49ff, primaryColorMap);
+
+const EdgeInsets defaultPagePadding = EdgeInsets.symmetric(horizontal: 25);
+const double defaultLeadingPadding = 85;

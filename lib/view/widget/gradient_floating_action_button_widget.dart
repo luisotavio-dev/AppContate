@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lancamento_contatos/colors.dart';
+import 'package:lancamento_contatos/theme.dart';
 
 class GradientFloatingActionButtonWidget extends StatelessWidget {
   final String text;

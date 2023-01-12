@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:lancamento_contatos/globals.dart';
+import 'package:lancamento_contatos/model/agendamento_model.dart';
 import 'package:lancamento_contatos/model/atendimento_model.dart';
 import 'package:lancamento_contatos/model/cliente_model.dart';
 import 'package:lancamento_contatos/model/usuario_model.dart';
@@ -32,21 +33,21 @@ class _InitialPageState extends State<InitialPage> {
 
   _carregarDados() async {
     // Verifica se o usuário já foi configurado
-    await Hive.openBox<Usuario>('usuarios').then((box) async {
-      String paginaInicial;
+    var box = await Hive.openBox<Usuario>('usuarios');
+    String paginaInicial;
 
-      if (box.isEmpty) {
-        paginaInicial = '/login';
-      } else {
-        usuarioLogado = box.getAt(0)!;
-        paginaInicial = '/home';
-      }
+    if (box.isEmpty) {
+      paginaInicial = '/login';
+    } else {
+      usuarioLogado = box.getAt(0)!;
+      paginaInicial = '/home';
+    }
 
-      await Hive.openBox<Cliente>('clientes').then((value) async {
-        await Hive.openBox<Atendimento>('atendimentos').then((value) {
-          Navigator.pushReplacementNamed(context, paginaInicial);
-        });
-      });
-    });
+    await Hive.openBox<Cliente>('clientes');
+    await Hive.openBox<Atendimento>('atendimentos');
+    await Hive.openBox<Agendamento>('agendamentos');
+
+    // ignore: use_build_context_synchronously
+    Navigator.pushReplacementNamed(context, paginaInicial);
   }
 }

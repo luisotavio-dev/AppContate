@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:lancamento_contatos/colors.dart';
+import 'package:lancamento_contatos/theme.dart';
 import 'package:lancamento_contatos/globals.dart';
 import 'package:lancamento_contatos/model/usuario_model.dart';
 import 'package:lancamento_contatos/view/widget/app_logo_widget.dart';
@@ -28,9 +28,9 @@ class _LoginPageState extends State<LoginPage> {
       body: Center(
         child: Container(
           height: size.height,
-          width: size.height,
+          width: size.width,
           decoration: const BoxDecoration(
-            color: Color(0xFFfafafa),
+            color: backgroundColor,
           ),
           child: SafeArea(
             child: Padding(

@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:lancamento_contatos/colors.dart';
+import 'package:lancamento_contatos/theme.dart';
 import 'package:lancamento_contatos/globals.dart';
 import 'package:lancamento_contatos/model/atendimento_model.dart';
 import 'package:lancamento_contatos/model/cliente_model.dart';
@@ -44,7 +44,7 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFFfafafa),
+        backgroundColor: backgroundColor,
         foregroundColor: Colors.black,
         centerTitle: true,
         elevation: 0,
@@ -56,42 +56,46 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        leadingWidth: defaultLeadingPadding,
         actions: [
-          IconButton(
-            onPressed: () => _menu(),
-            icon: const Icon(Icons.more_vert),
+          SizedBox(
+            width: defaultLeadingPadding,
+            child: IconButton(
+              onPressed: () => _menu(),
+              icon: const Icon(Icons.more_vert),
+            ),
           ),
         ],
       ),
-      floatingActionButton: Visibility(
-        visible: cliente == null,
-        child: GradientFloatingActionButtonWidget(
-          icon: Icons.add,
-          text: 'Novo Atendimento',
-          onTap: () => Navigator.pushNamed(context, '/novo_atendimento').then(
-            (value) {
-              if (value == true) {
-                setState(() {});
-              }
-            },
-          ),
+      floatingActionButton: GradientFloatingActionButtonWidget(
+        icon: Icons.add,
+        text: 'Novo Atendimento',
+        onTap: () => Navigator.pushNamed(context, '/novo_atendimento', arguments: cliente).then(
+          (value) {
+            if (value == true) {
+              setState(() {});
+            }
+          },
         ),
       ),
       body: Center(
         child: Container(
           height: size.height,
-          width: size.height,
+          width: size.width,
+          padding: defaultPagePadding,
           decoration: const BoxDecoration(
-            color: Color(0xFFfafafa),
+            color: backgroundColor,
           ),
           child: Column(
             children: [
               Visibility(
                 visible: cliente != null,
                 child: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(colors: gradient),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(colors: gradient),
+                    borderRadius: BorderRadius.circular(15),
                   ),
+                  margin: EdgeInsets.only(top: 10, bottom: filtroAtivo ? 0 : 10),
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Center(
                     child: Text(
@@ -106,7 +110,7 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
               Visibility(
                 visible: filtroAtivo,
                 child: Container(
-                  margin: const EdgeInsets.only(left: 25, right: 25, top: 15),
+                  margin: const EdgeInsets.only(top: 10),
                   padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10),
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -171,71 +175,65 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
                         );
                       }
 
-                      return Padding(
-                        padding: EdgeInsets.symmetric(
-                          vertical: size.height * 0.02,
-                          horizontal: size.height * 0.03,
-                        ),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              ListView.builder(
-                                padding: EdgeInsets.zero,
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemBuilder: (context, i) {
-                                  Atendimento atendimento = snapshot.data![i];
+                      return SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            ListView.builder(
+                              padding: EdgeInsets.zero,
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, i) {
+                                Atendimento atendimento = snapshot.data![i];
 
-                                  return CardWidget(
-                                    title: Container(
-                                      margin: const EdgeInsets.only(right: 15),
-                                      padding: const EdgeInsets.symmetric(vertical: 10),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            mainAxisSize: MainAxisSize.max,
-                                            children: [
-                                              Flexible(
-                                                child: Text(
-                                                  atendimento.cliente!.nome!,
-                                                  maxLines: 2,
-                                                  overflow: TextOverflow.clip,
-                                                  style: const TextStyle(
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
+                                return CardWidget(
+                                  title: Container(
+                                    margin: const EdgeInsets.only(right: 15),
+                                    padding: const EdgeInsets.symmetric(vertical: 10),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [
+                                            Flexible(
+                                              child: Text(
+                                                atendimento.cliente!.nome!,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.clip,
+                                                style: const TextStyle(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold,
                                                 ),
                                               ),
-                                              Text(
-                                                // ignore: prefer_interpolation_to_compose_strings
-                                                'Data: ' + dateTimeFormatter.format(atendimento.dataLancamento!),
-                                              ),
-                                            ],
-                                          ),
-                                          Text(
-                                            'Descrição: ${atendimento.descricao ?? ''}',
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ],
-                                      ),
+                                            ),
+                                            Text(
+                                              // ignore: prefer_interpolation_to_compose_strings
+                                              'Data: ' + dateTimeFormatter.format(atendimento.dataLancamento!),
+                                            ),
+                                          ],
+                                        ),
+                                        Text(
+                                          'Descrição: ${atendimento.descricao ?? ''}',
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
                                     ),
-                                    onPressed: () {
-                                      Navigator.pushNamed(
-                                        context,
-                                        '/detalhes_atendimento',
-                                        arguments: atendimento,
-                                      );
-                                    },
-                                  );
-                                },
-                                itemCount: snapshot.data!.length,
-                              ),
-                              SizedBox(height: size.height * 0.02),
-                            ],
-                          ),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/detalhes_atendimento',
+                                      arguments: atendimento,
+                                    );
+                                  },
+                                );
+                              },
+                              itemCount: snapshot.data!.length,
+                            ),
+                            SizedBox(height: size.height * 0.02),
+                          ],
                         ),
                       );
                     } else {

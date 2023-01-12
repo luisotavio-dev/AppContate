@@ -23,6 +23,7 @@ dependencies:
   drop_down_list: ^0.0.4         # Campo Combobox
   brasil_fields: ^1.9.0          # Mascaras e Formatos Brasileiros
   modal_bottom_sheet: ^2.1.2     # Bottom Sheet
+  table_calendar: ^3.0.8         # Calendário (can`t upgrade)
 
   # Util
   localization: ^2.1.0           # Localizações PT-BR

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lancamento_contatos/globals.dart';
 import 'package:lancamento_contatos/model/atendimento_model.dart';
+import 'package:lancamento_contatos/theme.dart';
 
 class DetalhesAtendimentoPage extends StatefulWidget {
   const DetalhesAtendimentoPage({super.key});
@@ -17,29 +18,32 @@ class _DetalhesAtendimentoPageState extends State<DetalhesAtendimentoPage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFFfafafa),
+        backgroundColor: backgroundColor,
         foregroundColor: Colors.black,
         centerTitle: true,
         elevation: 0,
         title: Text(
           'Detalhes do Atendimento',
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(
             color: const Color(0xff1D1617),
             fontSize: size.height * 0.025,
             fontWeight: FontWeight.bold,
           ),
         ),
+        leadingWidth: defaultLeadingPadding,
       ),
       body: Container(
         height: size.height,
-        width: size.height,
-        padding: const EdgeInsets.only(left: 24.0, right: 25.0, top: 15.0, bottom: 15.0),
+        width: size.width,
+        padding: defaultPagePadding,
         decoration: const BoxDecoration(
-          color: Color(0xFFfafafa),
+          color: backgroundColor,
         ),
         child: SingleChildScrollView(
           child: Column(
             children: [
+              const SizedBox(height: 10),
               Padding(
                 padding: EdgeInsets.only(bottom: size.height * 0.01),
                 child: Container(

@@ -2,7 +2,9 @@ import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:lancamento_contatos/globals.dart';
 import 'package:lancamento_contatos/model/cliente_model.dart';
+import 'package:lancamento_contatos/theme.dart';
 import 'package:lancamento_contatos/view/widget/gradient_floating_action_button_widget.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class DetalhesClientePage extends StatefulWidget {
   final Cliente cliente;
@@ -27,7 +29,7 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFFfafafa),
+        backgroundColor: backgroundColor,
         foregroundColor: Colors.black,
         centerTitle: true,
         elevation: 0,
@@ -39,37 +41,28 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        leadingWidth: defaultLeadingPadding,
         actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.pushNamed(
-                context,
-                '/persistir_cliente',
-                arguments: cliente,
-              ).then((value) {
-                if (value != null) {
-                  setState(() {
-                    cliente = value as Cliente;
-                  });
-                }
-              });
-            },
-            icon: const Icon(
-              Icons.edit_outlined,
+          SizedBox(
+            width: defaultLeadingPadding,
+            child: IconButton(
+              onPressed: () => _menu(),
+              icon: const Icon(Icons.more_vert),
             ),
           ),
         ],
       ),
       body: Container(
         height: size.height,
-        width: size.height,
-        padding: const EdgeInsets.only(left: 24.0, right: 25.0, top: 15.0, bottom: 15.0),
+        width: size.width,
+        padding: defaultPagePadding,
         decoration: const BoxDecoration(
-          color: Color(0xFFfafafa),
+          color: backgroundColor,
         ),
         child: SingleChildScrollView(
           child: Column(
             children: [
+              const SizedBox(height: 10),
               Padding(
                 padding: EdgeInsets.only(bottom: size.height * 0.01),
                 child: Container(
@@ -223,6 +216,53 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
             arguments: cliente,
           );
         },
+      ),
+    );
+  }
+
+  _menu() {
+    showMaterialModalBottomSheet(
+      context: context,
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.edit_outlined),
+              iconColor: Theme.of(context).colorScheme.secondary,
+              title: const Text('Editar Cliente'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(
+                  context,
+                  '/persistir_cliente',
+                  arguments: cliente,
+                ).then((value) {
+                  if (value != null) {
+                    setState(() {
+                      cliente = value as Cliente;
+                    });
+                  }
+                });
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.add_outlined),
+              iconColor: Theme.of(context).colorScheme.secondary,
+              title: const Text('Novo Atendimento para o Cliente'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(
+                  context,
+                  '/novo_atendimento',
+                  arguments: cliente,
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
