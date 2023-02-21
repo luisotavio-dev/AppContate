@@ -34,15 +34,11 @@ class _PersistirClientePageState extends State<PersistirClientePage> {
   final _telefoneAlternativoController = TextEditingController();
   final _observacoesController = TextEditingController();
 
+  late Future carregarDados;
+
   @override
   void initState() {
-    if (clienteEdicao != null) {
-      _nomeController.text = clienteEdicao!.nome!;
-      _contaController.text = clienteEdicao!.conta!.toString();
-      _telefonePrincipalController.text = UtilBrasilFields.obterTelefone(clienteEdicao!.telefone1!);
-      _telefoneAlternativoController.text = clienteEdicao!.telefone2 != null && clienteEdicao!.telefone2!.isNotEmpty ? UtilBrasilFields.obterTelefone(clienteEdicao!.telefone2!) : '';
-      _observacoesController.text = clienteEdicao!.observacoes ?? '';
-    }
+    carregarDados = _carregarDados();
     super.initState();
   }
 
@@ -72,236 +68,255 @@ class _PersistirClientePageState extends State<PersistirClientePage> {
         decoration: const BoxDecoration(
           color: backgroundColor,
         ),
-        child: Stack(
-          children: [
-            SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: FutureBuilder(
+          future: carregarDados,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return Stack(
                 children: [
-                  const SizedBox(height: 15),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: size.height * 0.01),
-                    child: const Text(
-                      'Nome:',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Form(
-                    child: TextFieldWidget(
-                      hintText: 'Nome do cliente',
-                      controller: _nomeController,
-                      defaultFocus: true,
-                      validator: (valuename) {
-                        if (valuename.length <= 0) {
-                          Util.buildSnackMessage(
-                            'Informe o cliente',
-                            context,
-                          );
-                          return '';
-                        }
-                        return null;
-                      },
-                      size: size,
-                      icon: Icons.person_outlined,
-                      keyboardType: TextInputType.name,
-                      password: false,
-                      formKey: _nomeKey,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: size.height * 0.01),
-                    child: const Text(
-                      'Dados da conta:',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Form(
-                    child: TextFieldWidget(
-                      hintText: 'Conta',
-                      controller: _contaController,
-                      validator: (valuename) {
-                        if (valuename.length <= 0) {
-                          Util.buildSnackMessage(
-                            'Informe a conta',
-                            context,
-                          );
-                          return '';
-                        }
-                        return null;
-                      },
-                      size: size,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                      ],
-                      icon: Icons.account_balance_wallet_outlined,
-                      password: false,
-                      formKey: _contaKey,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: size.height * 0.01),
-                    child: const Text(
-                      'Telefone Principal:',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Form(
-                    child: TextFieldWidget(
-                      hintText: 'Telefone',
-                      controller: _telefonePrincipalController,
-                      validator: (valuename) {
-                        if (valuename.length <= 0) {
-                          Util.buildSnackMessage(
-                            'Informe o telefone principal',
-                            context,
-                          );
-                          return '';
-                        }
+                  SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 15),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: size.height * 0.01),
+                          child: const Text(
+                            'Nome:',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Form(
+                          child: TextFieldWidget(
+                            hintText: 'Nome do cliente',
+                            controller: _nomeController,
+                            defaultFocus: true,
+                            validator: (valuename) {
+                              if (valuename.length <= 0) {
+                                Util.buildSnackMessage(
+                                  'Informe o cliente',
+                                  context,
+                                );
+                                return '';
+                              }
+                              return null;
+                            },
+                            size: size,
+                            icon: Icons.person_outlined,
+                            keyboardType: TextInputType.name,
+                            password: false,
+                            formKey: _nomeKey,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: size.height * 0.01),
+                          child: const Text(
+                            'Dados da conta:',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Form(
+                          child: TextFieldWidget(
+                            hintText: 'Conta',
+                            controller: _contaController,
+                            validator: (valuename) {
+                              if (valuename.length <= 0) {
+                                Util.buildSnackMessage(
+                                  'Informe a conta',
+                                  context,
+                                );
+                                return '';
+                              }
+                              return null;
+                            },
+                            size: size,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
+                            icon: Icons.account_balance_wallet_outlined,
+                            password: false,
+                            formKey: _contaKey,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: size.height * 0.01),
+                          child: const Text(
+                            'Telefone Principal:',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Form(
+                          child: TextFieldWidget(
+                            hintText: 'Telefone',
+                            controller: _telefonePrincipalController,
+                            validator: (valuename) {
+                              if (valuename.length <= 0) {
+                                Util.buildSnackMessage(
+                                  'Informe o telefone principal',
+                                  context,
+                                );
+                                return '';
+                              }
 
-                        try {
-                          var numero = UtilBrasilFields.obterTelefone(valuename, mascara: false);
-                          if (numero.length < 10 || numero.length > 11) {
-                            Util.buildSnackMessage(
-                              'O telefone principal informado é inválido.',
-                              context,
-                            );
-                            return '';
+                              try {
+                                var numero = UtilBrasilFields.obterTelefone(valuename, mascara: false);
+                                if (numero.length < 10 || numero.length > 11) {
+                                  Util.buildSnackMessage(
+                                    'O telefone principal informado é inválido.',
+                                    context,
+                                  );
+                                  return '';
+                                }
+                              } catch (e) {
+                                Util.buildSnackMessage(
+                                  'O telefone principal informado é inválido.',
+                                  context,
+                                );
+                                return '';
+                              }
+
+                              return null;
+                            },
+                            size: size,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              TelefoneInputFormatter(),
+                            ],
+                            icon: Icons.phone_outlined,
+                            password: false,
+                            formKey: _telefonePrincipalKey,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: size.height * 0.01),
+                          child: const Text(
+                            'Telefone Alternativo:',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Form(
+                          child: TextFieldWidget(
+                            hintText: 'Telefone 2',
+                            controller: _telefoneAlternativoController,
+                            validator: (valuename) {
+                              if (valuename == '') return null;
+
+                              try {
+                                var numero = UtilBrasilFields.obterTelefone(valuename, mascara: false);
+                                if (numero.length < 10 || numero.length > 11) {
+                                  Util.buildSnackMessage(
+                                    'O telefone alternativo informado é inválido.',
+                                    context,
+                                  );
+                                  return '';
+                                }
+                              } catch (e) {
+                                Util.buildSnackMessage(
+                                  'O telefone alternativo informado é inválido.',
+                                  context,
+                                );
+                                return '';
+                              }
+
+                              return null;
+                            },
+                            size: size,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              TelefoneInputFormatter(),
+                            ],
+                            icon: Icons.phone_outlined,
+                            password: false,
+                            formKey: _telefoneAlternativoKey,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: size.height * 0.01),
+                          child: const Text(
+                            'Observações:',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Form(
+                          child: TextFieldWidget(
+                            hintText: 'Observações do Cliente',
+                            controller: _observacoesController,
+                            validator: (valuename) {
+                              return null;
+                            },
+                            multilines: true,
+                            size: size,
+                            icon: Icons.chat_outlined,
+                            password: false,
+                            formKey: _observacoesKey,
+                            textInputAction: TextInputAction.newline,
+                            keyboardType: TextInputType.multiline,
+                          ),
+                        ),
+                        const SizedBox(height: 100),
+                      ],
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      color: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      child: ButtonWidget(
+                        text: 'Salvar',
+                        backColor: gradient,
+                        textColor: const [
+                          Colors.white,
+                          Colors.white,
+                        ],
+                        onPressed: () async {
+                          if (_nomeKey.currentState!.validate()) {
+                            if (_contaKey.currentState!.validate()) {
+                              if (_telefonePrincipalKey.currentState!.validate()) {
+                                if (_telefoneAlternativoKey.currentState!.validate()) {
+                                  _salvar(clienteEdicao: clienteEdicao).then((clienteSalvo) {
+                                    Util.buildSnackMessage(
+                                      'Cliente ${clienteEdicao != null ? 'Editado' : 'Inserido'}',
+                                      context,
+                                    );
+                                    Navigator.pop(context, clienteSalvo);
+                                  }).onError((error, stackTrace) {
+                                    Util.buildSnackMessage(
+                                      error.toString(),
+                                      context,
+                                      maxHeight: 35,
+                                    );
+                                  });
+                                }
+                              }
+                            }
                           }
-                        } catch (e) {
-                          Util.buildSnackMessage(
-                            'O telefone principal informado é inválido.',
-                            context,
-                          );
-                          return '';
-                        }
-
-                        return null;
-                      },
-                      size: size,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        TelefoneInputFormatter(),
-                      ],
-                      icon: Icons.phone_outlined,
-                      password: false,
-                      formKey: _telefonePrincipalKey,
+                        },
+                      ),
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: size.height * 0.01),
-                    child: const Text(
-                      'Telefone Alternativo:',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Form(
-                    child: TextFieldWidget(
-                      hintText: 'Telefone 2',
-                      controller: _telefoneAlternativoController,
-                      validator: (valuename) {
-                        if (valuename == '') return null;
-
-                        try {
-                          var numero = UtilBrasilFields.obterTelefone(valuename, mascara: false);
-                          if (numero.length < 10 || numero.length > 11) {
-                            Util.buildSnackMessage(
-                              'O telefone alternativo informado é inválido.',
-                              context,
-                            );
-                            return '';
-                          }
-                        } catch (e) {
-                          Util.buildSnackMessage(
-                            'O telefone alternativo informado é inválido.',
-                            context,
-                          );
-                          return '';
-                        }
-
-                        return null;
-                      },
-                      size: size,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        TelefoneInputFormatter(),
-                      ],
-                      icon: Icons.phone_outlined,
-                      password: false,
-                      formKey: _telefoneAlternativoKey,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: size.height * 0.01),
-                    child: const Text(
-                      'Observações:',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Form(
-                    child: TextFieldWidget(
-                      hintText: 'Observações do Cliente',
-                      controller: _observacoesController,
-                      validator: (valuename) {
-                        return null;
-                      },
-                      multilines: true,
-                      size: size,
-                      icon: Icons.chat_outlined,
-                      password: false,
-                      formKey: _observacoesKey,
-                      textInputAction: TextInputAction.newline,
-                      keyboardType: TextInputType.multiline,
-                    ),
-                  ),
-                  const SizedBox(height: 100),
                 ],
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                color: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                child: ButtonWidget(
-                  text: 'Salvar',
-                  backColor: gradient,
-                  textColor: const [
-                    Colors.white,
-                    Colors.white,
-                  ],
-                  onPressed: () async {
-                    if (_nomeKey.currentState!.validate()) {
-                      if (_contaKey.currentState!.validate()) {
-                        if (_telefonePrincipalKey.currentState!.validate()) {
-                          if (_telefoneAlternativoKey.currentState!.validate()) {
-                            _salvar(clienteEdicao: clienteEdicao).then((clienteSalvo) {
-                              Util.buildSnackMessage(
-                                'Cliente ${clienteEdicao != null ? 'Editado' : 'Inserido'}',
-                                context,
-                              );
-                              Navigator.pop(context, clienteSalvo);
-                            }).onError((error, stackTrace) {
-                              Util.buildSnackMessage(
-                                error.toString(),
-                                context,
-                                maxHeight: 35,
-                              );
-                            });
-                          }
-                        }
-                      }
-                    }
-                  },
-                ),
-              ),
-            ),
-          ],
+              );
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          },
         ),
       ),
     );
+  }
+
+  Future _carregarDados() async {
+    if (clienteEdicao != null) {
+      _nomeController.text = clienteEdicao!.nome!;
+      _contaController.text = clienteEdicao!.conta!.toString();
+      _telefonePrincipalController.text = UtilBrasilFields.obterTelefone(clienteEdicao!.telefone1!);
+      _telefoneAlternativoController.text = clienteEdicao!.telefone2 != null && clienteEdicao!.telefone2!.isNotEmpty ? UtilBrasilFields.obterTelefone(clienteEdicao!.telefone2!) : '';
+      _observacoesController.text = clienteEdicao!.observacoes ?? '';
+    }
   }
 
   Future<Cliente> _salvar({Cliente? clienteEdicao}) async {

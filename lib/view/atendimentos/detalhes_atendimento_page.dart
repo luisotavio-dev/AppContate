@@ -1,20 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:lancamento_contatos/globals.dart';
 import 'package:lancamento_contatos/model/atendimento_model.dart';
 import 'package:lancamento_contatos/theme.dart';
+import 'package:lancamento_contatos/util.dart';
+import 'package:lancamento_contatos/view/atendimentos/persistir_atendimento_page.dart';
+import 'package:lancamento_contatos/view/widget/alert_dialog_widget.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class DetalhesAtendimentoPage extends StatefulWidget {
-  const DetalhesAtendimentoPage({super.key});
+  final Atendimento atendimento;
+  const DetalhesAtendimentoPage(this.atendimento, {super.key});
 
   @override
   State<DetalhesAtendimentoPage> createState() => _DetalhesAtendimentoPageState();
 }
 
 class _DetalhesAtendimentoPageState extends State<DetalhesAtendimentoPage> {
+  late Atendimento atendimento = Atendimento();
+
+  @override
+  void initState() {
+    atendimento = widget.atendimento;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    final atendimento = ModalRoute.of(context)!.settings.arguments as Atendimento;
 
     return Scaffold(
       appBar: AppBar(
@@ -23,7 +36,7 @@ class _DetalhesAtendimentoPageState extends State<DetalhesAtendimentoPage> {
         centerTitle: true,
         elevation: 0,
         title: Text(
-          'Detalhes do Atendimento',
+          'Detalhes do Atend.',
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
             color: const Color(0xff1D1617),
@@ -31,6 +44,15 @@ class _DetalhesAtendimentoPageState extends State<DetalhesAtendimentoPage> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        actions: [
+          SizedBox(
+            width: defaultLeadingPadding,
+            child: IconButton(
+              onPressed: () => _menu(),
+              icon: const Icon(Icons.more_vert),
+            ),
+          ),
+        ],
         leadingWidth: defaultLeadingPadding,
       ),
       body: Container(
@@ -83,7 +105,11 @@ class _DetalhesAtendimentoPageState extends State<DetalhesAtendimentoPage> {
                         'Cliente: ',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      Flexible(child: Text(atendimento.cliente!.nome!)),
+                      Flexible(
+                        child: Text(
+                          '${atendimento.cliente!.nome!} - Conta ${atendimento.cliente!.conta!}',
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -134,6 +160,74 @@ class _DetalhesAtendimentoPageState extends State<DetalhesAtendimentoPage> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  _menu() {
+    showMaterialModalBottomSheet(
+      context: context,
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.edit_outlined),
+              iconColor: Theme.of(context).colorScheme.secondary,
+              title: const Text('Editar Atendimento'),
+              onTap: () {
+                ParametrosPersistirAtendimento parametros = ParametrosPersistirAtendimento();
+                parametros.atendimentoEdicao = atendimento;
+
+                Navigator.pop(context);
+                Navigator.pushNamed(
+                  context,
+                  '/persistir_atendimento',
+                  arguments: parametros,
+                ).then((value) {
+                  if (value != null) {
+                    setState(() {
+                      atendimento = value as Atendimento;
+                    });
+                  }
+                });
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.close),
+              iconColor: Theme.of(context).colorScheme.secondary,
+              title: const Text('Exluir Atendimento'),
+              onTap: () {
+                AlertDialogWidget.alertYesNo(
+                  context: context,
+                  title: 'Confirmação',
+                  message: 'Deseja realmente excluir o atendimento?',
+                  onNo: () => Navigator.pop(context),
+                  onYes: () async {
+                    await Hive.box<Atendimento>('atendimentos').delete(atendimento.key).then((value) {
+                      Util.buildSnackMessage(
+                        'Atendimento Excluído',
+                        context,
+                        maxHeight: 40,
+                      );
+                      Navigator.pop(context); // fecha a bottom bar
+                      Navigator.pop(context); // volta a pagina
+                    }).onError((error, stackTrace) {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                      Util.buildSnackMessage(
+                        error.toString(),
+                        context,
+                      );
+                    });
+                  },
+                );
+              },
+            ),
+          ],
         ),
       ),
     );

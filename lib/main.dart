@@ -5,10 +5,11 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lancamento_contatos/theme.dart';
 import 'package:lancamento_contatos/model/agendamento_model.dart';
 import 'package:lancamento_contatos/view/agendamentos/agendamentos_page.dart';
+import 'package:lancamento_contatos/view/agendamentos/detalhes_agendamento_page.dart';
 import 'package:lancamento_contatos/view/agendamentos/persistir_agendamento_page.dart';
 import 'package:lancamento_contatos/view/atendimentos/atendimentos_page.dart';
 import 'package:lancamento_contatos/view/atendimentos/detalhes_atendimento_page.dart';
-import 'package:lancamento_contatos/view/atendimentos/novo_atendimento_page.dart';
+import 'package:lancamento_contatos/view/atendimentos/persistir_atendimento_page.dart';
 
 import 'package:lancamento_contatos/view/clientes/clientes_page.dart';
 import 'package:lancamento_contatos/view/clientes/detalhes_cliente_page.dart';
@@ -26,6 +27,7 @@ String? paginaInicial;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Adicionar também no método de Limpar Dados
   Hive.registerAdapter<Usuario>(UsuarioAdapter());
   Hive.registerAdapter<Cliente>(ClienteAdapter());
   Hive.registerAdapter<Atendimento>(AtendimentoAdapter());
@@ -69,10 +71,11 @@ class MyApp extends StatelessWidget {
           "/detalhes_cliente": (context) => DetalhesClientePage(settings.arguments as Cliente),
           "/persistir_cliente": (context) => PersistirClientePage(settings.arguments as Cliente?),
           '/atendimentos': (context) => AtendimentosPage(settings.arguments as Cliente?),
-          '/detalhes_atendimento': (context) => const DetalhesAtendimentoPage(),
-          '/novo_atendimento': (context) => NovoAtendimentoPage(settings.arguments as Cliente?),
+          '/detalhes_atendimento': (context) => DetalhesAtendimentoPage(settings.arguments as Atendimento),
+          '/persistir_atendimento': (context) => NovoAtendimentoPage(settings.arguments as ParametrosPersistirAtendimento),
           '/agendamentos': (context) => const AgendamentosPage(),
-          '/persistir_agendamento': (context) => const PersistirAgendamentoPage(),
+          '/detalhes_agendamento': (context) => DetalhesAgendamentoPage(settings.arguments as Agendamento),
+          '/persistir_agendamento': (context) => PersistirAgendamentoPage(settings.arguments as ParametrosPersistirAgendamento),
         };
         WidgetBuilder builder = routes[settings.name]!;
         return MaterialPageRoute(

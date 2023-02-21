@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show ByteData, Uint8List, rootBundle;
 
+extension DateOnlyCompare on DateTime {
+  bool isSameDate(DateTime other) {
+    return year == other.year && month == other.month && day == other.day;
+  }
+}
+
 class Util {
   static ScaffoldFeatureController<SnackBar, SnackBarClosedReason> buildSnackMessage(String error, context, {double maxHeight = 13}) {
     return ScaffoldMessenger.of(context).showSnackBar(

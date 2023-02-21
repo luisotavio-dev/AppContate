@@ -3,38 +3,37 @@ import 'package:drop_down_list/drop_down_list.dart';
 import 'package:drop_down_list/model/selected_list_item.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:lancamento_contatos/model/agendamento_model.dart';
 import 'package:lancamento_contatos/theme.dart';
 import 'package:lancamento_contatos/globals.dart';
+import 'package:lancamento_contatos/model/atendimento_model.dart';
 import 'package:lancamento_contatos/model/cliente_model.dart';
 import 'package:lancamento_contatos/view/widget/button_widget.dart';
 import 'package:lancamento_contatos/view/widget/text_field_widget.dart';
 
 import '../../util.dart';
 
-class ParametrosPersistirAgendamento {
-  Agendamento? agendamentoEdicao;
+class ParametrosPersistirAtendimento {
+  Atendimento? atendimentoEdicao;
   Cliente? clienteSugerido;
-  DateTime? dataSugerida;
 }
 
-class PersistirAgendamentoPage extends StatefulWidget {
-  final ParametrosPersistirAgendamento parametros;
-  const PersistirAgendamentoPage(this.parametros, {super.key});
+class NovoAtendimentoPage extends StatefulWidget {
+  final ParametrosPersistirAtendimento parametros;
+  const NovoAtendimentoPage(this.parametros, {super.key});
 
   @override
-  State<PersistirAgendamentoPage> createState() => _PersistirAgendamentoPageState();
+  State<NovoAtendimentoPage> createState() => _NovoAtendimentoPageState();
 }
 
-class _PersistirAgendamentoPageState extends State<PersistirAgendamentoPage> {
-  Agendamento? get agendamentoEdicao => widget.parametros.agendamentoEdicao;
+class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
+  Atendimento? get atendimentoEdicao => widget.parametros.atendimentoEdicao;
   Cliente? get clienteSugerido => widget.parametros.clienteSugerido;
-  DateTime? get dataSugerida => widget.parametros.dataSugerida;
 
   String? idClienteSelecionado;
   final _clienteController = TextEditingController();
-  DateTime? dataAgendamento = DateTime.now();
+  DateTime? dataLancamento = DateTime.now();
   final _descricaoController = TextEditingController();
+  bool atendeu = false;
 
   final _clienteKey = GlobalKey<FormState>();
   final _descricaoKey = GlobalKey<FormState>();
@@ -57,7 +56,7 @@ class _PersistirAgendamentoPageState extends State<PersistirAgendamentoPage> {
         centerTitle: true,
         elevation: 0,
         title: Text(
-          agendamentoEdicao != null ? 'Editar Agendamento' : 'Novo Agendamento',
+          atendimentoEdicao != null ? 'Editar Atendimento' : 'Novo Atendimento',
           style: TextStyle(
             color: const Color(0xff1D1617),
             fontSize: size.height * 0.025,
@@ -86,7 +85,7 @@ class _PersistirAgendamentoPageState extends State<PersistirAgendamentoPage> {
                       Padding(
                         padding: EdgeInsets.only(bottom: size.height * 0.01),
                         child: const Text(
-                          'Data do Agendamento:',
+                          'Data de Lançamento:',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -105,7 +104,7 @@ class _PersistirAgendamentoPageState extends State<PersistirAgendamentoPage> {
                                 hintStyle: TextStyle(color: Color(0xffADA4A5)),
                                 border: InputBorder.none,
                                 contentPadding: EdgeInsets.only(top: 17),
-                                hintText: 'Data do Agendamento',
+                                hintText: 'Data de Lançamento',
                                 prefixIcon: Padding(
                                   padding: EdgeInsets.only(top: 10),
                                   child: Icon(
@@ -115,15 +114,15 @@ class _PersistirAgendamentoPageState extends State<PersistirAgendamentoPage> {
                                 ),
                               ),
                               firstDate: DateTime.now().add(const Duration(days: -7)),
-                              initialValue: dataAgendamento,
+                              initialValue: DateTime.now(),
                               lastDate: DateTime.now().add(const Duration(days: 365)),
-                              initialDate: dataAgendamento,
+                              initialDate: DateTime.now(),
                               autovalidateMode: AutovalidateMode.disabled,
                               dateFormat: dateTimeFormatter,
                               validator: (valuename) {
                                 if (valuename == null) {
                                   Util.buildSnackMessage(
-                                    'Informe uma data para o agendamento',
+                                    'Informe uma data de lançamento',
                                     context,
                                   );
                                   return '';
@@ -132,7 +131,7 @@ class _PersistirAgendamentoPageState extends State<PersistirAgendamentoPage> {
                               },
                               onDateSelected: (value) {
                                 setState(() {
-                                  dataAgendamento = value;
+                                  dataLancamento = value;
                                 });
                               },
                             ),
@@ -198,6 +197,26 @@ class _PersistirAgendamentoPageState extends State<PersistirAgendamentoPage> {
                           keyboardType: TextInputType.multiline,
                         ),
                       ),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: size.height * 0.02),
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                          ),
+                          child: CheckboxListTile(
+                            value: atendeu,
+                            controlAffinity: ListTileControlAffinity.leading,
+                            contentPadding: EdgeInsets.zero,
+                            title: const Text('Atendeu'),
+                            onChanged: (bool? value) {
+                              setState(() {
+                                atendeu = value!;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                   Align(
@@ -215,13 +234,12 @@ class _PersistirAgendamentoPageState extends State<PersistirAgendamentoPage> {
                         onPressed: () async {
                           if (_clienteKey.currentState!.validate()) {
                             if (_descricaoKey.currentState!.validate()) {
-                              _salvar(agendamentoEdicao: agendamentoEdicao).then((agendamentoSalvo) {
+                              _salvar(atendimentoEdicao: atendimentoEdicao).then((atendimentoSalvo) {
                                 Util.buildSnackMessage(
-                                  'Agendamento ${agendamentoEdicao != null ? 'Editado' : 'Inserido'}',
+                                  'Atendimento ${atendimentoEdicao != null ? 'Editado' : 'Inserido'}',
                                   context,
-                                  maxHeight: 40,
                                 );
-                                Navigator.pop(context, agendamentoSalvo);
+                                Navigator.pop(context, atendimentoSalvo);
                               }).onError((error, stackTrace) {
                                 Util.buildSnackMessage(
                                   error.toString(),
@@ -251,16 +269,12 @@ class _PersistirAgendamentoPageState extends State<PersistirAgendamentoPage> {
       _clienteController.text = clienteSugerido!.nome ?? '';
     }
 
-    if (dataSugerida != null) {
-      final now = DateTime.now();
-      dataAgendamento = Util.setHourToDateTime(dataSugerida!, now.hour, now.minute, now.second);
-    }
-
-    if (agendamentoEdicao != null) {
-      _descricaoController.text = agendamentoEdicao!.descricao!;
-      idClienteSelecionado = agendamentoEdicao!.cliente!.idCliente;
-      _clienteController.text = agendamentoEdicao!.cliente!.nome ?? '';
-      dataAgendamento = agendamentoEdicao!.dataAgendamento;
+    if (atendimentoEdicao != null) {
+      _descricaoController.text = atendimentoEdicao!.descricao!;
+      idClienteSelecionado = atendimentoEdicao!.cliente!.idCliente;
+      _clienteController.text = atendimentoEdicao!.cliente!.nome ?? '';
+      atendeu = atendimentoEdicao!.atendeu!;
+      dataLancamento = atendimentoEdicao!.dataLancamento!;
     }
   }
 
@@ -309,30 +323,31 @@ class _PersistirAgendamentoPageState extends State<PersistirAgendamentoPage> {
     }
   }
 
-  Future<Agendamento> _salvar({Agendamento? agendamentoEdicao}) async {
-    var box = Hive.box<Agendamento>('agendamentos');
+  Future _salvar({Atendimento? atendimentoEdicao}) async {
+    var box = Hive.box<Atendimento>('atendimentos');
 
     var dadosCliente = Hive.box<Cliente>('clientes').values.where((element) => element.idCliente == idClienteSelecionado).toList();
     Cliente cliente = dadosCliente[0];
 
-    Agendamento agendamento = Agendamento();
+    Atendimento atendimento = Atendimento();
 
     // Necessário para buscar o ID já salvo
-    if (agendamentoEdicao != null) {
-      agendamento = agendamentoEdicao;
+    if (atendimentoEdicao != null) {
+      atendimento = atendimentoEdicao;
     }
 
-    agendamento
-      ..dataLancamento = DateTime.now()
-      ..dataAgendamento = dataAgendamento
+    atendimento
+      ..dataLancamento = dataLancamento
       ..cliente = cliente
-      ..descricao = _descricaoController.text.trim();
+      ..idUsuario = usuarioLogado.idUsuario!
+      ..descricao = _descricaoController.text.trim()
+      ..atendeu = atendeu;
 
-    if (agendamentoEdicao == null) {
-      await box.add(agendamento);
+    if (atendimentoEdicao == null) {
+      await box.add(atendimento);
     }
-    await agendamento.save();
+    await atendimento.save();
 
-    return agendamento;
+    return atendimento;
   }
 }

@@ -10,6 +10,7 @@ import 'package:lancamento_contatos/globals.dart';
 import 'package:lancamento_contatos/model/atendimento_model.dart';
 import 'package:lancamento_contatos/model/cliente_model.dart';
 import 'package:lancamento_contatos/util.dart';
+import 'package:lancamento_contatos/view/atendimentos/persistir_atendimento_page.dart';
 import 'package:lancamento_contatos/view/widget/button_widget.dart';
 import 'package:lancamento_contatos/view/widget/card_widget.dart';
 import 'package:lancamento_contatos/view/widget/gradient_floating_action_button_widget.dart';
@@ -70,13 +71,17 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
       floatingActionButton: GradientFloatingActionButtonWidget(
         icon: Icons.add,
         text: 'Novo Atendimento',
-        onTap: () => Navigator.pushNamed(context, '/novo_atendimento', arguments: cliente).then(
-          (value) {
-            if (value == true) {
-              setState(() {});
-            }
-          },
-        ),
+        onTap: () {
+          ParametrosPersistirAtendimento parametros = ParametrosPersistirAtendimento()..clienteSugerido = cliente;
+
+          Navigator.pushNamed(context, '/persistir_atendimento', arguments: parametros).then(
+            (value) {
+              if (value != null) {
+                setState(() {});
+              }
+            },
+          );
+        },
       ),
       body: Center(
         child: Container(
@@ -226,7 +231,7 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
                                       context,
                                       '/detalhes_atendimento',
                                       arguments: atendimento,
-                                    );
+                                    ).then((value) => setState(() {}));
                                   },
                                 );
                               },

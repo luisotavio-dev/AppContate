@@ -1,27 +1,27 @@
-import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:lancamento_contatos/globals.dart';
-import 'package:lancamento_contatos/model/cliente_model.dart';
+import 'package:lancamento_contatos/model/agendamento_model.dart';
 import 'package:lancamento_contatos/theme.dart';
+import 'package:lancamento_contatos/util.dart';
 import 'package:lancamento_contatos/view/agendamentos/persistir_agendamento_page.dart';
-import 'package:lancamento_contatos/view/atendimentos/persistir_atendimento_page.dart';
-import 'package:lancamento_contatos/view/widget/gradient_floating_action_button_widget.dart';
+import 'package:lancamento_contatos/view/widget/alert_dialog_widget.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
-class DetalhesClientePage extends StatefulWidget {
-  final Cliente cliente;
-  const DetalhesClientePage(this.cliente, {super.key});
+class DetalhesAgendamentoPage extends StatefulWidget {
+  final Agendamento agendamento;
+  const DetalhesAgendamentoPage(this.agendamento, {super.key});
 
   @override
-  State<DetalhesClientePage> createState() => _DetalhesClientePageState();
+  State<DetalhesAgendamentoPage> createState() => _DetalhesAgendamentoPageState();
 }
 
-class _DetalhesClientePageState extends State<DetalhesClientePage> {
-  late Cliente cliente = Cliente();
+class _DetalhesAgendamentoPageState extends State<DetalhesAgendamentoPage> {
+  late Agendamento agendamento = Agendamento();
 
   @override
   void initState() {
-    cliente = widget.cliente;
+    agendamento = widget.agendamento;
     super.initState();
   }
 
@@ -36,14 +36,14 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
         centerTitle: true,
         elevation: 0,
         title: Text(
-          'Detalhes do Cliente',
+          'Detalhes do Agend.',
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(
             color: const Color(0xff1D1617),
             fontSize: size.height * 0.025,
             fontWeight: FontWeight.bold,
           ),
         ),
-        leadingWidth: defaultLeadingPadding,
         actions: [
           SizedBox(
             width: defaultLeadingPadding,
@@ -53,6 +53,7 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
             ),
           ),
         ],
+        leadingWidth: defaultLeadingPadding,
       ),
       body: Container(
         height: size.height,
@@ -79,32 +80,10 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
                   child: Row(
                     children: [
                       const Text(
-                        'Nome: ',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      Flexible(child: Text(cliente.nome!)),
-                    ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(bottom: size.height * 0.01),
-                child: Container(
-                  constraints: BoxConstraints(
-                    minHeight: size.height * 0.06,
-                  ),
-                  padding: const EdgeInsets.all(15),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
-                  ),
-                  child: Row(
-                    children: [
-                      const Text(
                         'Lançado em: ',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      Text(dateTimeFormatter.format(cliente.dataLancamento!)),
+                      Text(dateTimeFormatter.format(agendamento.dataLancamento!)),
                     ],
                   ),
                 ),
@@ -123,10 +102,10 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
                   child: Row(
                     children: [
                       const Text(
-                        'Conta: ',
+                        'Agendado para: ',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      Text(cliente.conta!.toString()),
+                      Text(dateTimeFormatter.format(agendamento.dataAgendamento!)),
                     ],
                   ),
                 ),
@@ -145,79 +124,45 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
                   child: Row(
                     children: [
                       const Text(
-                        'Telefone Principal: ',
+                        'Cliente: ',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      Text(UtilBrasilFields.obterTelefone(cliente.telefone1!)),
+                      Flexible(
+                        child: Text(
+                          '${agendamento.cliente!.nome!} - Conta ${agendamento.cliente!.conta!}',
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ),
-              cliente.telefone2 != null && cliente.telefone2 != ""
-                  ? Padding(
-                      padding: EdgeInsets.only(bottom: size.height * 0.01),
-                      child: Container(
-                        constraints: BoxConstraints(
-                          minHeight: size.height * 0.06,
-                        ),
-                        width: size.width * 0.9,
-                        padding: const EdgeInsets.all(15),
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                        ),
-                        child: Row(
-                          children: [
-                            const Text(
-                              'Telefone Alternativo: ',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            Text(UtilBrasilFields.obterTelefone(cliente.telefone2!)),
-                          ],
-                        ),
+              Padding(
+                padding: EdgeInsets.only(bottom: size.height * 0.01),
+                child: Container(
+                  constraints: BoxConstraints(
+                    minHeight: size.height * 0.06,
+                  ),
+                  width: size.width * 0.9,
+                  padding: const EdgeInsets.all(15),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Descrição: ',
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                    )
-                  : const Visibility(visible: false, child: SizedBox()),
-              cliente.observacoes != null && cliente.observacoes != ''
-                  ? Padding(
-                      padding: EdgeInsets.only(bottom: size.height * 0.01),
-                      child: Container(
-                        constraints: BoxConstraints(
-                          minHeight: size.height * 0.06,
-                        ),
-                        width: size.width * 0.9,
-                        padding: const EdgeInsets.all(15),
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Observações: ',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            Text(cliente.observacoes!.toString()),
-                          ],
-                        ),
-                      ),
-                    )
-                  : const Visibility(visible: false, child: SizedBox()),
+                      Text(agendamento.descricao ?? ''),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
-      ),
-      floatingActionButton: GradientFloatingActionButtonWidget(
-        icon: Icons.chat_outlined,
-        text: 'Atendimentos',
-        onTap: () {
-          Navigator.pushNamed(
-            context,
-            '/atendimentos',
-            arguments: cliente,
-          );
-        },
       ),
     );
   }
@@ -232,53 +177,57 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ListTile(
-              leading: const Icon(Icons.phone_outlined),
+              leading: const Icon(Icons.edit_outlined),
               iconColor: Theme.of(context).colorScheme.secondary,
-              title: const Text('Novo Atendimento'),
+              title: const Text('Editar Agendamento'),
               onTap: () {
-                ParametrosPersistirAtendimento parametros = ParametrosPersistirAtendimento()..clienteSugerido = cliente;
-
-                Navigator.pop(context);
-                Navigator.pushNamed(
-                  context,
-                  '/persistir_atendimento',
-                  arguments: parametros,
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.event_outlined),
-              iconColor: Theme.of(context).colorScheme.secondary,
-              title: const Text('Novo Agendamento'),
-              onTap: () {
-                ParametrosPersistirAgendamento parametros = ParametrosPersistirAgendamento()..clienteSugerido = cliente;
+                ParametrosPersistirAgendamento parametros = ParametrosPersistirAgendamento();
+                parametros.agendamentoEdicao = agendamento;
 
                 Navigator.pop(context);
                 Navigator.pushNamed(
                   context,
                   '/persistir_agendamento',
                   arguments: parametros,
-                );
-              },
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.edit_outlined),
-              iconColor: Theme.of(context).colorScheme.secondary,
-              title: const Text('Editar Cliente'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(
-                  context,
-                  '/persistir_cliente',
-                  arguments: cliente,
                 ).then((value) {
                   if (value != null) {
                     setState(() {
-                      cliente = value as Cliente;
+                      agendamento = value as Agendamento;
                     });
                   }
                 });
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.close),
+              iconColor: Theme.of(context).colorScheme.secondary,
+              title: const Text('Exluir Agendamento'),
+              onTap: () {
+                AlertDialogWidget.alertYesNo(
+                  context: context,
+                  title: 'Confirmação',
+                  message: 'Deseja realmente excluir o agendamento?',
+                  onNo: () => Navigator.pop(context),
+                  onYes: () async {
+                    await Hive.box<Agendamento>('agendamentos').delete(agendamento.key).then((value) {
+                      Util.buildSnackMessage(
+                        'Agendamento Excluído',
+                        context,
+                        maxHeight: 40,
+                      );
+                      Navigator.pop(context); // fecha o alert
+                      Navigator.pop(context); // fecha a bottom bar
+                      Navigator.pop(context); // volta a pagina
+                    }).onError((error, stackTrace) {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                      Util.buildSnackMessage(
+                        error.toString(),
+                        context,
+                      );
+                    });
+                  },
+                );
               },
             ),
           ],

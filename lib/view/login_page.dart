@@ -34,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
           child: SafeArea(
             child: Padding(
-              padding: EdgeInsets.only(top: size.height * 0.02),
+              padding: defaultPagePadding,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -81,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
                           formKey: _formKey,
                         ),
                       ),
-                      SizedBox(height: size.height * 0.02),
+                      const SizedBox(height: 10),
                       ButtonWidget(
                         text: 'Confirmar',
                         backColor: gradient,

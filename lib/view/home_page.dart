@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_alert/flutter_platform_alert.dart';
 import 'package:hive/hive.dart';
 import 'package:lancamento_contatos/globals.dart';
+import 'package:lancamento_contatos/model/agendamento_model.dart';
 import 'package:lancamento_contatos/model/atendimento_model.dart';
 import 'package:lancamento_contatos/model/cliente_model.dart';
 import 'package:lancamento_contatos/model/item_menu_model.dart';
@@ -210,6 +211,7 @@ class _HomePageState extends State<HomePage> {
       Hive.box<Usuario>('usuarios').clear();
       Hive.box<Cliente>('clientes').clear();
       Hive.box<Atendimento>('atendimentos').clear();
+      Hive.box<Agendamento>('agendamentos').clear();
 
       Util.buildSnackMessage(
         'Dados removidos com sucesso',
