@@ -10,7 +10,7 @@ import 'package:lancamento_contatos/view/widget/gradient_floating_action_button_
 import 'package:table_calendar/table_calendar.dart';
 
 class AgendamentosPage extends StatefulWidget {
-  const AgendamentosPage({Key? key}) : super(key: key);
+  const AgendamentosPage({super.key});
 
   @override
   State<AgendamentosPage> createState() => _AgendamentosPageState();
@@ -41,7 +41,8 @@ class _AgendamentosPageState extends State<AgendamentosPage> {
   }
 
   Future<List<Agendamento>> getEvents({bool apenasAtualizar = false}) async {
-    List<Agendamento> events = Hive.box<Agendamento>('agendamentos').values.toList();
+    List<Agendamento> events =
+        Hive.box<Agendamento>('agendamentos').values.toList();
     setState(() {
       _allEvents = events;
       _selectedDay = _focusedDay;
@@ -78,7 +79,8 @@ class _AgendamentosPageState extends State<AgendamentosPage> {
         icon: Icons.add,
         text: 'Novo Agendamento',
         onTap: () {
-          ParametrosPersistirAgendamento parametros = ParametrosPersistirAgendamento()..dataSugerida = _selectedDay!;
+          ParametrosPersistirAgendamento parametros =
+              ParametrosPersistirAgendamento()..dataSugerida = _selectedDay!;
 
           Navigator.pushNamed(
             context,
@@ -116,10 +118,12 @@ class _AgendamentosPageState extends State<AgendamentosPage> {
                   eventLoader: _getEventsForDay,
                   focusedDay: _focusedDay,
                   selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-                  firstDay: DateTime(_today.year, _today.month - 12, _today.day),
+                  firstDay:
+                      DateTime(_today.year, _today.month - 12, _today.day),
                   lastDay: DateTime(_today.year, _today.month + 12, _today.day),
                   calendarStyle: CalendarStyle(
-                    weekendTextStyle: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                    weekendTextStyle: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary),
                     holidayTextStyle: const TextStyle(color: Colors.deepOrange),
                     canMarkersOverflow: false,
                     markerDecoration: BoxDecoration(
@@ -171,10 +175,10 @@ class _AgendamentosPageState extends State<AgendamentosPage> {
                     valueListenable: _selectedEvents,
                     builder: (context, eventos, _) {
                       if (eventos.isEmpty) {
-                        return Column(
+                        return const Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
-                          children: const [
+                          children: [
                             Icon(
                               Icons.event,
                               size: 40,
@@ -200,11 +204,13 @@ class _AgendamentosPageState extends State<AgendamentosPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
                                       Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             agendamento.cliente!.nome!,
@@ -215,13 +221,16 @@ class _AgendamentosPageState extends State<AgendamentosPage> {
                                           ),
                                           Text(
                                             'Conta: ${agendamento.cliente!.conta!}',
-                                            style: const TextStyle(color: Colors.grey),
+                                            style: const TextStyle(
+                                                color: Colors.grey),
                                           ),
                                         ],
                                       ),
                                       Text(
-                                        dateTimeFormatter.format(agendamento.dataAgendamento!),
-                                        style: const TextStyle(color: Colors.grey),
+                                        dateTimeFormatter.format(
+                                            agendamento.dataAgendamento!),
+                                        style:
+                                            const TextStyle(color: Colors.grey),
                                       ),
                                     ],
                                   ),
@@ -236,7 +245,8 @@ class _AgendamentosPageState extends State<AgendamentosPage> {
                                 '/detalhes_agendamento',
                                 arguments: agendamento,
                               ).then((value) {
-                                _getEventsFuture = getEvents(apenasAtualizar: true);
+                                _getEventsFuture =
+                                    getEvents(apenasAtualizar: true);
                               });
                             },
                           );

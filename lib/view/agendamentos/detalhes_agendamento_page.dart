@@ -6,14 +6,14 @@ import 'package:lancamento_contatos/theme.dart';
 import 'package:lancamento_contatos/util.dart';
 import 'package:lancamento_contatos/view/agendamentos/persistir_agendamento_page.dart';
 import 'package:lancamento_contatos/view/widget/alert_dialog_widget.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class DetalhesAgendamentoPage extends StatefulWidget {
   final Agendamento agendamento;
   const DetalhesAgendamentoPage(this.agendamento, {super.key});
 
   @override
-  State<DetalhesAgendamentoPage> createState() => _DetalhesAgendamentoPageState();
+  State<DetalhesAgendamentoPage> createState() =>
+      _DetalhesAgendamentoPageState();
 }
 
 class _DetalhesAgendamentoPageState extends State<DetalhesAgendamentoPage> {
@@ -83,7 +83,8 @@ class _DetalhesAgendamentoPageState extends State<DetalhesAgendamentoPage> {
                         'Lançado em: ',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      Text(dateTimeFormatter.format(agendamento.dataLancamento!)),
+                      Text(dateTimeFormatter
+                          .format(agendamento.dataLancamento!)),
                     ],
                   ),
                 ),
@@ -105,7 +106,8 @@ class _DetalhesAgendamentoPageState extends State<DetalhesAgendamentoPage> {
                         'Agendado para: ',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      Text(dateTimeFormatter.format(agendamento.dataAgendamento!)),
+                      Text(dateTimeFormatter
+                          .format(agendamento.dataAgendamento!)),
                     ],
                   ),
                 ),
@@ -168,7 +170,7 @@ class _DetalhesAgendamentoPageState extends State<DetalhesAgendamentoPage> {
   }
 
   _menu() {
-    showMaterialModalBottomSheet(
+    showModalBottomSheet(
       context: context,
       builder: (context) => Padding(
         padding: const EdgeInsets.all(10),
@@ -181,7 +183,8 @@ class _DetalhesAgendamentoPageState extends State<DetalhesAgendamentoPage> {
               iconColor: Theme.of(context).colorScheme.secondary,
               title: const Text('Editar Agendamento'),
               onTap: () {
-                ParametrosPersistirAgendamento parametros = ParametrosPersistirAgendamento();
+                ParametrosPersistirAgendamento parametros =
+                    ParametrosPersistirAgendamento();
                 parametros.agendamentoEdicao = agendamento;
 
                 Navigator.pop(context);
@@ -209,7 +212,9 @@ class _DetalhesAgendamentoPageState extends State<DetalhesAgendamentoPage> {
                   message: 'Deseja realmente excluir o agendamento?',
                   onNo: () => Navigator.pop(context),
                   onYes: () async {
-                    await Hive.box<Agendamento>('agendamentos').delete(agendamento.key).then((value) {
+                    await Hive.box<Agendamento>('agendamentos')
+                        .delete(agendamento.key)
+                        .then((value) {
                       Util.buildSnackMessage(
                         'Agendamento Excluído',
                         context,

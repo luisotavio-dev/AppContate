@@ -14,7 +14,6 @@ import 'package:lancamento_contatos/view/atendimentos/persistir_atendimento_page
 import 'package:lancamento_contatos/view/widget/button_widget.dart';
 import 'package:lancamento_contatos/view/widget/card_widget.dart';
 import 'package:lancamento_contatos/view/widget/gradient_floating_action_button_widget.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 
@@ -72,9 +71,12 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
         icon: Icons.add,
         text: 'Novo Atendimento',
         onTap: () {
-          ParametrosPersistirAtendimento parametros = ParametrosPersistirAtendimento()..clienteSugerido = cliente;
+          ParametrosPersistirAtendimento parametros =
+              ParametrosPersistirAtendimento()..clienteSugerido = cliente;
 
-          Navigator.pushNamed(context, '/persistir_atendimento', arguments: parametros).then(
+          Navigator.pushNamed(context, '/persistir_atendimento',
+                  arguments: parametros)
+              .then(
             (value) {
               if (value != null) {
                 setState(() {});
@@ -100,7 +102,8 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
                     gradient: const LinearGradient(colors: gradient),
                     borderRadius: BorderRadius.circular(15),
                   ),
-                  margin: EdgeInsets.only(top: 10, bottom: filtroAtivo ? 0 : 10),
+                  margin:
+                      EdgeInsets.only(top: 10, bottom: filtroAtivo ? 0 : 10),
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Center(
                     child: Text(
@@ -116,10 +119,12 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
                 visible: filtroAtivo,
                 child: Container(
                   margin: const EdgeInsets.only(top: 10),
-                  padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10),
+                  padding:
+                      const EdgeInsets.only(left: 15, right: 15, bottom: 10),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    border: Border.all(color: const Color.fromARGB(255, 237, 237, 237)),
+                    border: Border.all(
+                        color: const Color.fromARGB(255, 237, 237, 237)),
                     borderRadius: BorderRadius.circular(15.0),
                   ),
                   child: Column(
@@ -165,11 +170,12 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
                         return Center(child: Text(snapshot.error.toString()));
                       }
 
-                      if (!snapshot.hasData || snapshot.hasData && snapshot.data!.isEmpty) {
-                        return Column(
+                      if (!snapshot.hasData ||
+                          snapshot.hasData && snapshot.data!.isEmpty) {
+                        return const Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
-                          children: const [
+                          children: [
                             Icon(
                               Icons.clear,
                               size: 40,
@@ -193,12 +199,15 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
                                 return CardWidget(
                                   title: Container(
                                     margin: const EdgeInsets.only(right: 15),
-                                    padding: const EdgeInsets.symmetric(vertical: 10),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
                                           mainAxisSize: MainAxisSize.max,
                                           children: [
                                             Flexible(
@@ -214,7 +223,10 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
                                             ),
                                             Text(
                                               // ignore: prefer_interpolation_to_compose_strings
-                                              'Data: ' + dateTimeFormatter.format(atendimento.dataLancamento!),
+                                              'Data: ' +
+                                                  dateTimeFormatter.format(
+                                                      atendimento
+                                                          .dataLancamento!),
                                             ),
                                           ],
                                         ),
@@ -266,7 +278,9 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
     }
 
     if (cliente != null) {
-      atendimentos = atendimentos.where((element) => element.cliente!.idCliente == cliente!.idCliente).toList();
+      atendimentos = atendimentos
+          .where((element) => element.cliente!.idCliente == cliente!.idCliente)
+          .toList();
     }
 
     if (filtroAtivo) {
@@ -274,7 +288,11 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
       filtroDataInicio = Util.setHourToDateTime(filtroDataInicio, 0, 0, 0);
       filtroDataFim = Util.setHourToDateTime(filtroDataFim, 23, 59, 59);
 
-      atendimentos = atendimentos.where((element) => element.dataLancamento!.isAfter(filtroDataInicio) && element.dataLancamento!.isBefore(filtroDataFim)).toList();
+      atendimentos = atendimentos
+          .where((element) =>
+              element.dataLancamento!.isAfter(filtroDataInicio) &&
+              element.dataLancamento!.isBefore(filtroDataFim))
+          .toList();
     }
 
     atendimentosRenderizando = atendimentos;
@@ -283,7 +301,7 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
   }
 
   _menu() {
-    showMaterialModalBottomSheet(
+    showModalBottomSheet(
       context: context,
       builder: (context) => Padding(
         padding: const EdgeInsets.all(10),
@@ -323,7 +341,11 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
 
     for (Atendimento atendimento in atendimentosRenderizando) {
       if (atendimento.cliente!.conta == null) {
-        var dadosCliente = Hive.box<Cliente>('clientes').values.where((element) => element.idCliente == atendimento.cliente!.idCliente).toList();
+        var dadosCliente = Hive.box<Cliente>('clientes')
+            .values
+            .where((element) =>
+                element.idCliente == atendimento.cliente!.idCliente)
+            .toList();
         atendimento.cliente = dadosCliente[0];
       }
 
@@ -370,7 +392,7 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
               ],
             ),
           ),
-          pw.Table.fromTextArray(
+          pw.TableHelper.fromTextArray(
             context: context,
             data: linhas,
             border: pw.TableBorder(
@@ -416,7 +438,9 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
             ),
             child: pw.Text(
               titulo,
-              style: pw.Theme.of(context).defaultTextStyle.copyWith(color: PdfColors.grey),
+              style: pw.Theme.of(context)
+                  .defaultTextStyle
+                  .copyWith(color: PdfColors.grey),
             ),
           );
         },
@@ -441,7 +465,9 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
                 ),
                 pw.Text(
                   'Página ${context.pageNumber} de ${context.pagesCount}',
-                  style: pw.Theme.of(context).defaultTextStyle.copyWith(color: PdfColors.grey),
+                  style: pw.Theme.of(context)
+                      .defaultTextStyle
+                      .copyWith(color: PdfColors.grey),
                 ),
               ],
             ),
@@ -463,7 +489,7 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
     Navigator.pop(context);
     Size size = MediaQuery.of(context).size;
 
-    showMaterialModalBottomSheet(
+    showModalBottomSheet(
       context: context,
       builder: (context) => Padding(
         padding: const EdgeInsets.all(20),
@@ -500,7 +526,8 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
                             height: size.height * 0.06,
                             decoration: const BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.all(Radius.circular(15)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15)),
                             ),
                             child: DateTimeFormField(
                               decoration: const InputDecoration(
@@ -519,13 +546,14 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
                               ),
                               firstDate: filtroDataMinima,
                               initialValue: filtroDataInicio,
-                              lastDate: DateTime.now().add(const Duration(days: 365)),
-                              initialDate: DateTime.now(),
+                              lastDate:
+                                  DateTime.now().add(const Duration(days: 365)),
+                              initialPickerDateTime: DateTime.now(),
                               autovalidateMode: AutovalidateMode.disabled,
                               dateFormat: dateTimeFormatter,
-                              onDateSelected: (value) {
+                              onChanged: (value) {
                                 setState(() {
-                                  filtroDataInicio = value;
+                                  filtroDataInicio = value!;
                                 });
                               },
                               validator: (valuename) {
@@ -564,7 +592,8 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
                             height: size.height * 0.06,
                             decoration: const BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.all(Radius.circular(15)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15)),
                             ),
                             child: DateTimeFormField(
                               decoration: const InputDecoration(
@@ -583,13 +612,14 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
                               ),
                               firstDate: filtroDataMinima,
                               initialValue: filtroDataFim,
-                              lastDate: DateTime.now().add(const Duration(days: 365)),
-                              initialDate: DateTime.now(),
+                              lastDate:
+                                  DateTime.now().add(const Duration(days: 365)),
+                              initialPickerDateTime: DateTime.now(),
                               autovalidateMode: AutovalidateMode.disabled,
                               dateFormat: dateTimeFormatter,
-                              onDateSelected: (value) {
+                              onChanged: (value) {
                                 setState(() {
-                                  filtroDataFim = value;
+                                  filtroDataFim = value!;
                                 });
                               },
                               validator: (valuename) {

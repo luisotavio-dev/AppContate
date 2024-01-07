@@ -6,7 +6,6 @@ import 'package:lancamento_contatos/theme.dart';
 import 'package:lancamento_contatos/view/agendamentos/persistir_agendamento_page.dart';
 import 'package:lancamento_contatos/view/atendimentos/persistir_atendimento_page.dart';
 import 'package:lancamento_contatos/view/widget/gradient_floating_action_button_widget.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class DetalhesClientePage extends StatefulWidget {
   final Cliente cliente;
@@ -172,7 +171,8 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
                               'Telefone Alternativo: ',
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-                            Text(UtilBrasilFields.obterTelefone(cliente.telefone2!)),
+                            Text(UtilBrasilFields.obterTelefone(
+                                cliente.telefone2!)),
                           ],
                         ),
                       ),
@@ -223,7 +223,7 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
   }
 
   _menu() {
-    showMaterialModalBottomSheet(
+    showModalBottomSheet(
       context: context,
       builder: (context) => Padding(
         padding: const EdgeInsets.all(10),
@@ -236,7 +236,8 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
               iconColor: Theme.of(context).colorScheme.secondary,
               title: const Text('Novo Atendimento'),
               onTap: () {
-                ParametrosPersistirAtendimento parametros = ParametrosPersistirAtendimento()..clienteSugerido = cliente;
+                ParametrosPersistirAtendimento parametros =
+                    ParametrosPersistirAtendimento()..clienteSugerido = cliente;
 
                 Navigator.pop(context);
                 Navigator.pushNamed(
@@ -251,7 +252,8 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
               iconColor: Theme.of(context).colorScheme.secondary,
               title: const Text('Novo Agendamento'),
               onTap: () {
-                ParametrosPersistirAgendamento parametros = ParametrosPersistirAgendamento()..clienteSugerido = cliente;
+                ParametrosPersistirAgendamento parametros =
+                    ParametrosPersistirAgendamento()..clienteSugerido = cliente;
 
                 Navigator.pop(context);
                 Navigator.pushNamed(

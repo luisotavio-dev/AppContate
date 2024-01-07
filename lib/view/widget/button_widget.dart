@@ -8,12 +8,12 @@ class ButtonWidget extends StatelessWidget {
   final GestureTapCallback onPressed;
 
   const ButtonWidget({
-    Key? key,
+    super.key,
     required this.text,
     required this.backColor,
     required this.textColor,
     required this.onPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

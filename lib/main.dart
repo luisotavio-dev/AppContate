@@ -52,7 +52,9 @@ class MyApp extends StatelessWidget {
       ],
       builder: (context, child) {
         return MediaQuery(
-          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+          data: MediaQuery.of(context).copyWith(
+            textScaler: const TextScaler.linear(1.0),
+          ),
           child: child!,
         );
       },
@@ -68,14 +70,21 @@ class MyApp extends StatelessWidget {
           '/login': (context) => const LoginPage(),
           '/home': (context) => const HomePage(),
           '/clientes': (context) => const ClientesPage(),
-          "/detalhes_cliente": (context) => DetalhesClientePage(settings.arguments as Cliente),
-          "/persistir_cliente": (context) => PersistirClientePage(settings.arguments as Cliente?),
-          '/atendimentos': (context) => AtendimentosPage(settings.arguments as Cliente?),
-          '/detalhes_atendimento': (context) => DetalhesAtendimentoPage(settings.arguments as Atendimento),
-          '/persistir_atendimento': (context) => NovoAtendimentoPage(settings.arguments as ParametrosPersistirAtendimento),
+          "/detalhes_cliente": (context) =>
+              DetalhesClientePage(settings.arguments as Cliente),
+          "/persistir_cliente": (context) =>
+              PersistirClientePage(settings.arguments as Cliente?),
+          '/atendimentos': (context) =>
+              AtendimentosPage(settings.arguments as Cliente?),
+          '/detalhes_atendimento': (context) =>
+              DetalhesAtendimentoPage(settings.arguments as Atendimento),
+          '/persistir_atendimento': (context) => NovoAtendimentoPage(
+              settings.arguments as ParametrosPersistirAtendimento),
           '/agendamentos': (context) => const AgendamentosPage(),
-          '/detalhes_agendamento': (context) => DetalhesAgendamentoPage(settings.arguments as Agendamento),
-          '/persistir_agendamento': (context) => PersistirAgendamentoPage(settings.arguments as ParametrosPersistirAgendamento),
+          '/detalhes_agendamento': (context) =>
+              DetalhesAgendamentoPage(settings.arguments as Agendamento),
+          '/persistir_agendamento': (context) => PersistirAgendamentoPage(
+              settings.arguments as ParametrosPersistirAgendamento),
         };
         WidgetBuilder builder = routes[settings.name]!;
         return MaterialPageRoute(

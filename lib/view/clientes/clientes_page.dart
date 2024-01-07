@@ -40,7 +40,8 @@ class _ClientesPageState extends State<ClientesPage> {
       floatingActionButton: GradientFloatingActionButtonWidget(
         icon: Icons.add,
         text: 'Novo Cliente',
-        onTap: () => Navigator.pushNamed(context, '/persistir_cliente').then((value) {
+        onTap: () =>
+            Navigator.pushNamed(context, '/persistir_cliente').then((value) {
           if (value != null) {
             setState(() {});
           }
@@ -77,11 +78,12 @@ class _ClientesPageState extends State<ClientesPage> {
                         return Center(child: Text(snapshot.error.toString()));
                       }
 
-                      if (!snapshot.hasData || snapshot.hasData && snapshot.data!.isEmpty) {
-                        return Column(
+                      if (!snapshot.hasData ||
+                          snapshot.hasData && snapshot.data!.isEmpty) {
+                        return const Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
-                          children: const [
+                          children: [
                             Icon(
                               Icons.clear,
                               size: 40,
@@ -105,9 +107,11 @@ class _ClientesPageState extends State<ClientesPage> {
                                 return CardWidget(
                                   title: Container(
                                     margin: const EdgeInsets.only(right: 15),
-                                    padding: const EdgeInsets.symmetric(vertical: 10),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
                                         Text(
@@ -165,6 +169,10 @@ class _ClientesPageState extends State<ClientesPage> {
     }
 
     if (pesquisa == '') return clientes;
-    return clientes.where((element) => element.nome!.contains(pesquisa) || element.conta!.toString().contains(pesquisa)).toList();
+    return clientes
+        .where((element) =>
+            element.nome!.contains(pesquisa) ||
+            element.conta!.toString().contains(pesquisa))
+        .toList();
   }
 }

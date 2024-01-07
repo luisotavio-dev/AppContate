@@ -96,7 +96,8 @@ class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
                             height: size.height * 0.06,
                             decoration: const BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.all(Radius.circular(15)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15)),
                             ),
                             child: DateTimeFormField(
                               decoration: const InputDecoration(
@@ -113,10 +114,12 @@ class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
                                   ),
                                 ),
                               ),
-                              firstDate: DateTime.now().add(const Duration(days: -7)),
+                              firstDate:
+                                  DateTime.now().add(const Duration(days: -7)),
                               initialValue: DateTime.now(),
-                              lastDate: DateTime.now().add(const Duration(days: 365)),
-                              initialDate: DateTime.now(),
+                              lastDate:
+                                  DateTime.now().add(const Duration(days: 365)),
+                              initialPickerDateTime: DateTime.now(),
                               autovalidateMode: AutovalidateMode.disabled,
                               dateFormat: dateTimeFormatter,
                               validator: (valuename) {
@@ -129,7 +132,7 @@ class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
                                 }
                                 return null;
                               },
-                              onDateSelected: (value) {
+                              onChanged: (value) {
                                 setState(() {
                                   dataLancamento = value;
                                 });
@@ -234,7 +237,8 @@ class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
                         onPressed: () async {
                           if (_clienteKey.currentState!.validate()) {
                             if (_descricaoKey.currentState!.validate()) {
-                              _salvar(atendimentoEdicao: atendimentoEdicao).then((atendimentoSalvo) {
+                              _salvar(atendimentoEdicao: atendimentoEdicao)
+                                  .then((atendimentoSalvo) {
                                 Util.buildSnackMessage(
                                   'Atendimento ${atendimentoEdicao != null ? 'Editado' : 'Inserido'}',
                                   context,
@@ -326,7 +330,10 @@ class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
   Future _salvar({Atendimento? atendimentoEdicao}) async {
     var box = Hive.box<Atendimento>('atendimentos');
 
-    var dadosCliente = Hive.box<Cliente>('clientes').values.where((element) => element.idCliente == idClienteSelecionado).toList();
+    var dadosCliente = Hive.box<Cliente>('clientes')
+        .values
+        .where((element) => element.idCliente == idClienteSelecionado)
+        .toList();
     Cliente cliente = dadosCliente[0];
 
     Atendimento atendimento = Atendimento();

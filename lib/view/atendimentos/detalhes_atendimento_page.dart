@@ -6,14 +6,14 @@ import 'package:lancamento_contatos/theme.dart';
 import 'package:lancamento_contatos/util.dart';
 import 'package:lancamento_contatos/view/atendimentos/persistir_atendimento_page.dart';
 import 'package:lancamento_contatos/view/widget/alert_dialog_widget.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class DetalhesAtendimentoPage extends StatefulWidget {
   final Atendimento atendimento;
   const DetalhesAtendimentoPage(this.atendimento, {super.key});
 
   @override
-  State<DetalhesAtendimentoPage> createState() => _DetalhesAtendimentoPageState();
+  State<DetalhesAtendimentoPage> createState() =>
+      _DetalhesAtendimentoPageState();
 }
 
 class _DetalhesAtendimentoPageState extends State<DetalhesAtendimentoPage> {
@@ -83,7 +83,8 @@ class _DetalhesAtendimentoPageState extends State<DetalhesAtendimentoPage> {
                         'Lançado em: ',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      Text(dateTimeFormatter.format(atendimento.dataLancamento!)),
+                      Text(dateTimeFormatter
+                          .format(atendimento.dataLancamento!)),
                     ],
                   ),
                 ),
@@ -166,7 +167,7 @@ class _DetalhesAtendimentoPageState extends State<DetalhesAtendimentoPage> {
   }
 
   _menu() {
-    showMaterialModalBottomSheet(
+    showModalBottomSheet(
       context: context,
       builder: (context) => Padding(
         padding: const EdgeInsets.all(10),
@@ -179,7 +180,8 @@ class _DetalhesAtendimentoPageState extends State<DetalhesAtendimentoPage> {
               iconColor: Theme.of(context).colorScheme.secondary,
               title: const Text('Editar Atendimento'),
               onTap: () {
-                ParametrosPersistirAtendimento parametros = ParametrosPersistirAtendimento();
+                ParametrosPersistirAtendimento parametros =
+                    ParametrosPersistirAtendimento();
                 parametros.atendimentoEdicao = atendimento;
 
                 Navigator.pop(context);
@@ -207,7 +209,9 @@ class _DetalhesAtendimentoPageState extends State<DetalhesAtendimentoPage> {
                   message: 'Deseja realmente excluir o atendimento?',
                   onNo: () => Navigator.pop(context),
                   onYes: () async {
-                    await Hive.box<Atendimento>('atendimentos').delete(atendimento.key).then((value) {
+                    await Hive.box<Atendimento>('atendimentos')
+                        .delete(atendimento.key)
+                        .then((value) {
                       Util.buildSnackMessage(
                         'Atendimento Excluído',
                         context,

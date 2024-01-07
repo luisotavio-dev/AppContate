@@ -8,13 +8,13 @@ class CardWidget extends StatelessWidget {
   final GestureTapCallback onPressed;
 
   const CardWidget({
-    Key? key,
+    super.key,
     this.icon,
     required this.title,
     this.backColor,
     this.badge,
     required this.onPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
