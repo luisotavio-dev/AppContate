@@ -1,4 +1,4 @@
-![Logo](assets/img/logomarca.png)
+<img src="assets/img/logomarca.png" alt="Logo" width="500"/>
 
 # Contate
 
