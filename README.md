@@ -1,7 +1,5 @@
 <img src="assets/img/logomarca.png" alt="Logo" width="500"/>
 
-# Contate
-
 Bem-vindo(a) ao repositório do Contate! Este é um aplicativo projetado para facilitar o gerenciamento de clientes e atendimentos. Com um banco de dados local, o Contate permite que os usuários cadastrem clientes, registrem atendimentos realizados e agendem futuros atendimentos de maneira eficiente e intuitiva.
 
 ## Funcionalidades
