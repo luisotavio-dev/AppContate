@@ -1,14 +1,13 @@
 import 'package:date_field/date_field.dart';
-import 'package:drop_down_list/drop_down_list.dart';
-import 'package:drop_down_list/model/selected_list_item.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:lancamento_contatos/model/agendamento_model.dart';
 import 'package:lancamento_contatos/theme.dart';
 import 'package:lancamento_contatos/globals.dart';
 import 'package:lancamento_contatos/model/cliente_model.dart';
-import 'package:lancamento_contatos/view/widget/button_widget.dart';
-import 'package:lancamento_contatos/view/widget/text_field_widget.dart';
+import 'package:lancamento_contatos/util/pesquisar_cliente.dart';
+import 'package:lancamento_contatos/view/widgets/button_widget.dart';
+import 'package:lancamento_contatos/view/widgets/text_field_widget.dart';
 
 import '../../util.dart';
 
@@ -23,8 +22,7 @@ class PersistirAgendamentoPage extends StatefulWidget {
   const PersistirAgendamentoPage(this.parametros, {super.key});
 
   @override
-  State<PersistirAgendamentoPage> createState() =>
-      _PersistirAgendamentoPageState();
+  State<PersistirAgendamentoPage> createState() => _PersistirAgendamentoPageState();
 }
 
 class _PersistirAgendamentoPageState extends State<PersistirAgendamentoPage> {
@@ -98,8 +96,7 @@ class _PersistirAgendamentoPageState extends State<PersistirAgendamentoPage> {
                             height: size.height * 0.06,
                             decoration: const BoxDecoration(
                               color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15)),
+                              borderRadius: BorderRadius.all(Radius.circular(8)),
                             ),
                             child: DateTimeFormField(
                               decoration: const InputDecoration(
@@ -116,11 +113,9 @@ class _PersistirAgendamentoPageState extends State<PersistirAgendamentoPage> {
                                   ),
                                 ),
                               ),
-                              firstDate:
-                                  DateTime.now().add(const Duration(days: -7)),
+                              firstDate: DateTime.now().add(const Duration(days: -7)),
                               initialValue: dataAgendamento,
-                              lastDate:
-                                  DateTime.now().add(const Duration(days: 365)),
+                              lastDate: DateTime.now().add(const Duration(days: 365)),
                               initialPickerDateTime: dataAgendamento,
                               autovalidateMode: AutovalidateMode.disabled,
                               dateFormat: dateTimeFormatter,
@@ -164,7 +159,15 @@ class _PersistirAgendamentoPageState extends State<PersistirAgendamentoPage> {
                             return null;
                           },
                           readOnly: true,
-                          onTap: () => _abrirPesquisaClientes(),
+                          onTap: () => abrirPesquisaClientes(
+                            context: context,
+                            selectedItems: (value) {
+                              setState(() {
+                                _clienteController.text = value[0].name;
+                                idClienteSelecionado = value[0].value.toString();
+                              });
+                            },
+                          ),
                           controller: _clienteController,
                           size: size,
                           icon: Icons.person_outlined,
@@ -212,15 +215,11 @@ class _PersistirAgendamentoPageState extends State<PersistirAgendamentoPage> {
                       child: ButtonWidget(
                         text: 'Salvar',
                         backColor: gradient,
-                        textColor: const [
-                          Colors.white,
-                          Colors.white,
-                        ],
+                        textColor: const [Colors.white, Colors.white],
                         onPressed: () async {
                           if (_clienteKey.currentState!.validate()) {
                             if (_descricaoKey.currentState!.validate()) {
-                              _salvar(agendamentoEdicao: agendamentoEdicao)
-                                  .then((agendamentoSalvo) {
+                              _salvar(agendamentoEdicao: agendamentoEdicao).then((agendamentoSalvo) {
                                 Util.buildSnackMessage(
                                   'Agendamento ${agendamentoEdicao != null ? 'Editado' : 'Inserido'}',
                                   context,
@@ -258,8 +257,7 @@ class _PersistirAgendamentoPageState extends State<PersistirAgendamentoPage> {
 
     if (dataSugerida != null) {
       final now = DateTime.now();
-      dataAgendamento = Util.setHourToDateTime(
-          dataSugerida!, now.hour, now.minute, now.second);
+      dataAgendamento = Util.setHourToDateTime(dataSugerida!, now.hour, now.minute, now.second);
     }
 
     if (agendamentoEdicao != null) {
@@ -270,58 +268,11 @@ class _PersistirAgendamentoPageState extends State<PersistirAgendamentoPage> {
     }
   }
 
-  _abrirPesquisaClientes() {
-    try {
-      // Pesquisa os clientes cadastrados
-      List<SelectedListItem> clientes = [];
-      Box<Cliente> box = Hive.box<Cliente>('clientes');
-
-      // Constrói os itens do combobox
-      for (var i = 0; i < box.length; i++) {
-        SelectedListItem item = SelectedListItem(
-          name: '${box.getAt(i)!.nome!} - Conta ${box.getAt(i)!.conta!}',
-          value: box.getAt(i)!.idCliente!,
-        );
-        clientes.add(item);
-      }
-
-      clientes.sort((a, b) => a.name.compareTo(b.name));
-
-      DropDownState(
-        DropDown(
-          dropDownBackgroundColor: backgroundColor,
-          bottomSheetTitle: const Text(
-            'Pesquisar Cliente',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20.0,
-            ),
-          ),
-          data: clientes,
-          selectedItems: (value) {
-            setState(() {
-              _clienteController.text = value[0].name;
-              idClienteSelecionado = value[0].value.toString();
-            });
-          },
-          enableMultipleSelection: false,
-        ),
-      ).showModal(context);
-    } catch (e) {
-      Util.buildSnackMessage(
-        e.toString(),
-        context,
-      );
-    }
-  }
-
   Future<Agendamento> _salvar({Agendamento? agendamentoEdicao}) async {
     var box = Hive.box<Agendamento>('agendamentos');
 
-    var dadosCliente = Hive.box<Cliente>('clientes')
-        .values
-        .where((element) => element.idCliente == idClienteSelecionado)
-        .toList();
+    var dadosCliente =
+        Hive.box<Cliente>('clientes').values.where((element) => element.idCliente == idClienteSelecionado).toList();
     Cliente cliente = dadosCliente[0];
 
     Agendamento agendamento = Agendamento();

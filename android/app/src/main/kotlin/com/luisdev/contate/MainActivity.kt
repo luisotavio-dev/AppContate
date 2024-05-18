@@ -1,4 +1,4 @@
-package br.com.lmsoftwares.contatemais
+package com.luisdev.contate
 
 import io.flutter.embedding.android.FlutterActivity
 

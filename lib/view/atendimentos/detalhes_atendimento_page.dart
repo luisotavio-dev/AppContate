@@ -5,15 +5,14 @@ import 'package:lancamento_contatos/model/atendimento_model.dart';
 import 'package:lancamento_contatos/theme.dart';
 import 'package:lancamento_contatos/util.dart';
 import 'package:lancamento_contatos/view/atendimentos/persistir_atendimento_page.dart';
-import 'package:lancamento_contatos/view/widget/alert_dialog_widget.dart';
+import 'package:lancamento_contatos/view/widgets/alert_dialog_widget.dart';
 
 class DetalhesAtendimentoPage extends StatefulWidget {
   final Atendimento atendimento;
   const DetalhesAtendimentoPage(this.atendimento, {super.key});
 
   @override
-  State<DetalhesAtendimentoPage> createState() =>
-      _DetalhesAtendimentoPageState();
+  State<DetalhesAtendimentoPage> createState() => _DetalhesAtendimentoPageState();
 }
 
 class _DetalhesAtendimentoPageState extends State<DetalhesAtendimentoPage> {
@@ -75,7 +74,7 @@ class _DetalhesAtendimentoPageState extends State<DetalhesAtendimentoPage> {
                   padding: const EdgeInsets.all(15),
                   decoration: const BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
                   ),
                   child: Row(
                     children: [
@@ -83,8 +82,7 @@ class _DetalhesAtendimentoPageState extends State<DetalhesAtendimentoPage> {
                         'Lançado em: ',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      Text(dateTimeFormatter
-                          .format(atendimento.dataLancamento!)),
+                      Text(dateTimeFormatter.format(atendimento.dataLancamento!)),
                     ],
                   ),
                 ),
@@ -98,7 +96,7 @@ class _DetalhesAtendimentoPageState extends State<DetalhesAtendimentoPage> {
                   padding: const EdgeInsets.all(15),
                   decoration: const BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
                   ),
                   child: Row(
                     children: [
@@ -108,7 +106,9 @@ class _DetalhesAtendimentoPageState extends State<DetalhesAtendimentoPage> {
                       ),
                       Flexible(
                         child: Text(
-                          '${atendimento.cliente!.nome!} - Conta ${atendimento.cliente!.conta!}',
+                          atendimento.cliente!.conta != null
+                              ? '${atendimento.cliente!.nome!} - Conta ${atendimento.cliente!.conta}'
+                              : atendimento.cliente!.nome!,
                         ),
                       ),
                     ],
@@ -124,7 +124,7 @@ class _DetalhesAtendimentoPageState extends State<DetalhesAtendimentoPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   decoration: const BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
                   ),
                   child: CheckboxListTile(
                     controlAffinity: ListTileControlAffinity.leading,
@@ -145,7 +145,7 @@ class _DetalhesAtendimentoPageState extends State<DetalhesAtendimentoPage> {
                   padding: const EdgeInsets.all(15),
                   decoration: const BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -180,8 +180,7 @@ class _DetalhesAtendimentoPageState extends State<DetalhesAtendimentoPage> {
               iconColor: Theme.of(context).colorScheme.secondary,
               title: const Text('Editar Atendimento'),
               onTap: () {
-                ParametrosPersistirAtendimento parametros =
-                    ParametrosPersistirAtendimento();
+                ParametrosPersistirAtendimento parametros = ParametrosPersistirAtendimento();
                 parametros.atendimentoEdicao = atendimento;
 
                 Navigator.pop(context);
@@ -209,9 +208,7 @@ class _DetalhesAtendimentoPageState extends State<DetalhesAtendimentoPage> {
                   message: 'Deseja realmente excluir o atendimento?',
                   onNo: () => Navigator.pop(context),
                   onYes: () async {
-                    await Hive.box<Atendimento>('atendimentos')
-                        .delete(atendimento.key)
-                        .then((value) {
+                    await Hive.box<Atendimento>('atendimentos').delete(atendimento.key).then((value) {
                       Util.buildSnackMessage(
                         'Atendimento Excluído',
                         context,

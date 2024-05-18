@@ -5,7 +5,7 @@ import 'package:lancamento_contatos/model/cliente_model.dart';
 import 'package:lancamento_contatos/theme.dart';
 import 'package:lancamento_contatos/view/agendamentos/persistir_agendamento_page.dart';
 import 'package:lancamento_contatos/view/atendimentos/persistir_atendimento_page.dart';
-import 'package:lancamento_contatos/view/widget/gradient_floating_action_button_widget.dart';
+import 'package:lancamento_contatos/view/widgets/gradient_floating_action_button_widget.dart';
 
 class DetalhesClientePage extends StatefulWidget {
   final Cliente cliente;
@@ -73,7 +73,7 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
                   padding: const EdgeInsets.all(15),
                   decoration: const BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
                   ),
                   child: Row(
                     children: [
@@ -95,7 +95,7 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
                   padding: const EdgeInsets.all(15),
                   decoration: const BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
                   ),
                   child: Row(
                     children: [
@@ -108,28 +108,30 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
                   ),
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.only(bottom: size.height * 0.01),
-                child: Container(
-                  constraints: BoxConstraints(
-                    minHeight: size.height * 0.06,
-                  ),
-                  padding: const EdgeInsets.all(15),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
-                  ),
-                  child: Row(
-                    children: [
-                      const Text(
-                        'Conta: ',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+              cliente.conta != null
+                  ? Padding(
+                      padding: EdgeInsets.only(bottom: size.height * 0.01),
+                      child: Container(
+                        constraints: BoxConstraints(
+                          minHeight: size.height * 0.06,
+                        ),
+                        padding: const EdgeInsets.all(15),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Text(
+                              'Conta: ',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text(cliente.conta.toString()),
+                          ],
+                        ),
                       ),
-                      Text(cliente.conta!.toString()),
-                    ],
-                  ),
-                ),
-              ),
+                    )
+                  : const SizedBox(),
               Padding(
                 padding: EdgeInsets.only(bottom: size.height * 0.01),
                 child: Container(
@@ -139,7 +141,7 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
                   padding: const EdgeInsets.all(15),
                   decoration: const BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
                   ),
                   child: Row(
                     children: [
@@ -163,7 +165,7 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
                         padding: const EdgeInsets.all(15),
                         decoration: const BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
                         ),
                         child: Row(
                           children: [
@@ -171,8 +173,7 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
                               'Telefone Alternativo: ',
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-                            Text(UtilBrasilFields.obterTelefone(
-                                cliente.telefone2!)),
+                            Text(UtilBrasilFields.obterTelefone(cliente.telefone2!)),
                           ],
                         ),
                       ),
@@ -189,7 +190,7 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
                         padding: const EdgeInsets.all(15),
                         decoration: const BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,8 +237,7 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
               iconColor: Theme.of(context).colorScheme.secondary,
               title: const Text('Novo Atendimento'),
               onTap: () {
-                ParametrosPersistirAtendimento parametros =
-                    ParametrosPersistirAtendimento()..clienteSugerido = cliente;
+                ParametrosPersistirAtendimento parametros = ParametrosPersistirAtendimento()..clienteSugerido = cliente;
 
                 Navigator.pop(context);
                 Navigator.pushNamed(
@@ -252,8 +252,7 @@ class _DetalhesClientePageState extends State<DetalhesClientePage> {
               iconColor: Theme.of(context).colorScheme.secondary,
               title: const Text('Novo Agendamento'),
               onTap: () {
-                ParametrosPersistirAgendamento parametros =
-                    ParametrosPersistirAgendamento()..clienteSugerido = cliente;
+                ParametrosPersistirAgendamento parametros = ParametrosPersistirAgendamento()..clienteSugerido = cliente;
 
                 Navigator.pop(context);
                 Navigator.pushNamed(

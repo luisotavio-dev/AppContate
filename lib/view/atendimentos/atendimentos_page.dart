@@ -11,9 +11,9 @@ import 'package:lancamento_contatos/model/atendimento_model.dart';
 import 'package:lancamento_contatos/model/cliente_model.dart';
 import 'package:lancamento_contatos/util.dart';
 import 'package:lancamento_contatos/view/atendimentos/persistir_atendimento_page.dart';
-import 'package:lancamento_contatos/view/widget/button_widget.dart';
-import 'package:lancamento_contatos/view/widget/card_widget.dart';
-import 'package:lancamento_contatos/view/widget/gradient_floating_action_button_widget.dart';
+import 'package:lancamento_contatos/view/widgets/button_widget.dart';
+import 'package:lancamento_contatos/view/widgets/card_widget.dart';
+import 'package:lancamento_contatos/view/widgets/gradient_floating_action_button_widget.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 
@@ -71,12 +71,9 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
         icon: Icons.add,
         text: 'Novo Atendimento',
         onTap: () {
-          ParametrosPersistirAtendimento parametros =
-              ParametrosPersistirAtendimento()..clienteSugerido = cliente;
+          ParametrosPersistirAtendimento parametros = ParametrosPersistirAtendimento()..clienteSugerido = cliente;
 
-          Navigator.pushNamed(context, '/persistir_atendimento',
-                  arguments: parametros)
-              .then(
+          Navigator.pushNamed(context, '/persistir_atendimento', arguments: parametros).then(
             (value) {
               if (value != null) {
                 setState(() {});
@@ -100,10 +97,9 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
                 child: Container(
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(colors: gradient),
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  margin:
-                      EdgeInsets.only(top: 10, bottom: filtroAtivo ? 0 : 10),
+                  margin: EdgeInsets.only(top: 10, bottom: filtroAtivo ? 0 : 10),
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Center(
                     child: Text(
@@ -119,13 +115,11 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
                 visible: filtroAtivo,
                 child: Container(
                   margin: const EdgeInsets.only(top: 10),
-                  padding:
-                      const EdgeInsets.only(left: 15, right: 15, bottom: 10),
+                  padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    border: Border.all(
-                        color: const Color.fromARGB(255, 237, 237, 237)),
-                    borderRadius: BorderRadius.circular(15.0),
+                    border: Border.all(color: const Color.fromARGB(255, 237, 237, 237)),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -170,20 +164,8 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
                         return Center(child: Text(snapshot.error.toString()));
                       }
 
-                      if (!snapshot.hasData ||
-                          snapshot.hasData && snapshot.data!.isEmpty) {
-                        return const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.clear,
-                              size: 40,
-                            ),
-                            SizedBox(height: 10),
-                            Text('Não há dados para exibir.'),
-                          ],
-                        );
+                      if (!snapshot.hasData || snapshot.hasData && snapshot.data!.isEmpty) {
+                        return const Center(child: Text('Não há dados para exibir.'));
                       }
 
                       return SingleChildScrollView(
@@ -199,15 +181,12 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
                                 return CardWidget(
                                   title: Container(
                                     margin: const EdgeInsets.only(right: 15),
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10),
+                                    padding: const EdgeInsets.symmetric(vertical: 10),
                                     child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           mainAxisSize: MainAxisSize.max,
                                           children: [
                                             Flexible(
@@ -223,10 +202,7 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
                                             ),
                                             Text(
                                               // ignore: prefer_interpolation_to_compose_strings
-                                              'Data: ' +
-                                                  dateTimeFormatter.format(
-                                                      atendimento
-                                                          .dataLancamento!),
+                                              'Data: ' + dateTimeFormatter.format(atendimento.dataLancamento!),
                                             ),
                                           ],
                                         ),
@@ -278,9 +254,7 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
     }
 
     if (cliente != null) {
-      atendimentos = atendimentos
-          .where((element) => element.cliente!.idCliente == cliente!.idCliente)
-          .toList();
+      atendimentos = atendimentos.where((element) => element.cliente!.idCliente == cliente!.idCliente).toList();
     }
 
     if (filtroAtivo) {
@@ -290,8 +264,7 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
 
       atendimentos = atendimentos
           .where((element) =>
-              element.dataLancamento!.isAfter(filtroDataInicio) &&
-              element.dataLancamento!.isBefore(filtroDataFim))
+              element.dataLancamento!.isAfter(filtroDataInicio) && element.dataLancamento!.isBefore(filtroDataFim))
           .toList();
     }
 
@@ -343,8 +316,7 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
       if (atendimento.cliente!.conta == null) {
         var dadosCliente = Hive.box<Cliente>('clientes')
             .values
-            .where((element) =>
-                element.idCliente == atendimento.cliente!.idCliente)
+            .where((element) => element.idCliente == atendimento.cliente!.idCliente)
             .toList();
         atendimento.cliente = dadosCliente[0];
       }
@@ -438,9 +410,7 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
             ),
             child: pw.Text(
               titulo,
-              style: pw.Theme.of(context)
-                  .defaultTextStyle
-                  .copyWith(color: PdfColors.grey),
+              style: pw.Theme.of(context).defaultTextStyle.copyWith(color: PdfColors.grey),
             ),
           );
         },
@@ -465,9 +435,7 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
                 ),
                 pw.Text(
                   'Página ${context.pageNumber} de ${context.pagesCount}',
-                  style: pw.Theme.of(context)
-                      .defaultTextStyle
-                      .copyWith(color: PdfColors.grey),
+                  style: pw.Theme.of(context).defaultTextStyle.copyWith(color: PdfColors.grey),
                 ),
               ],
             ),
@@ -526,8 +494,7 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
                             height: size.height * 0.06,
                             decoration: const BoxDecoration(
                               color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15)),
+                              borderRadius: BorderRadius.all(Radius.circular(8)),
                             ),
                             child: DateTimeFormField(
                               decoration: const InputDecoration(
@@ -546,8 +513,7 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
                               ),
                               firstDate: filtroDataMinima,
                               initialValue: filtroDataInicio,
-                              lastDate:
-                                  DateTime.now().add(const Duration(days: 365)),
+                              lastDate: DateTime.now().add(const Duration(days: 365)),
                               initialPickerDateTime: DateTime.now(),
                               autovalidateMode: AutovalidateMode.disabled,
                               dateFormat: dateTimeFormatter,
@@ -592,8 +558,7 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
                             height: size.height * 0.06,
                             decoration: const BoxDecoration(
                               color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15)),
+                              borderRadius: BorderRadius.all(Radius.circular(8)),
                             ),
                             child: DateTimeFormField(
                               decoration: const InputDecoration(
@@ -612,8 +577,7 @@ class _AtendimentosPageState extends State<AtendimentosPage> {
                               ),
                               firstDate: filtroDataMinima,
                               initialValue: filtroDataFim,
-                              lastDate:
-                                  DateTime.now().add(const Duration(days: 365)),
+                              lastDate: DateTime.now().add(const Duration(days: 365)),
                               initialPickerDateTime: DateTime.now(),
                               autovalidateMode: AutovalidateMode.disabled,
                               dateFormat: dateTimeFormatter,

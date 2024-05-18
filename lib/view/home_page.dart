@@ -10,8 +10,8 @@ import 'package:lancamento_contatos/model/cliente_model.dart';
 import 'package:lancamento_contatos/model/item_menu_model.dart';
 import 'package:lancamento_contatos/model/usuario_model.dart';
 import 'package:lancamento_contatos/theme.dart';
-import 'package:lancamento_contatos/view/widget/app_logo_widget.dart';
-import 'package:lancamento_contatos/view/widget/card_widget.dart';
+import 'package:lancamento_contatos/view/widgets/app_logo_widget.dart';
+import 'package:lancamento_contatos/view/widgets/card_widget.dart';
 
 import '../util.dart';
 
@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       key: _scaffoldKey,
-      drawer: drawer(),
+      endDrawer: drawer(),
       body: Center(
         child: Container(
           height: size.height,
@@ -101,7 +101,7 @@ class _HomePageState extends State<HomePage> {
                                 ],
                               ),
                               GestureDetector(
-                                onTap: () => _scaffoldKey.currentState!.openDrawer(),
+                                onTap: () => _scaffoldKey.currentState!.openEndDrawer(),
                                 child: CircleAvatar(
                                   child: Text(usuarioLogado.nome![0].toUpperCase()),
                                 ),

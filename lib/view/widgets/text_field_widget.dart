@@ -51,7 +51,7 @@ class TextFieldWidget extends StatelessWidget {
         ),
         decoration: const BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(15)),
+          borderRadius: BorderRadius.all(Radius.circular(8)),
         ),
         child: Form(
           key: formKey,

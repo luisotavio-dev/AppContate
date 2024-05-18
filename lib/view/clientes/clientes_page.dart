@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:lancamento_contatos/model/cliente_model.dart';
 import 'package:lancamento_contatos/theme.dart';
-import 'package:lancamento_contatos/view/widget/card_widget.dart';
-import 'package:lancamento_contatos/view/widget/gradient_floating_action_button_widget.dart';
-import 'package:lancamento_contatos/view/widget/text_field_widget.dart';
+import 'package:lancamento_contatos/view/widgets/card_widget.dart';
+import 'package:lancamento_contatos/view/widgets/gradient_floating_action_button_widget.dart';
+import 'package:lancamento_contatos/view/widgets/text_field_widget.dart';
 
 class ClientesPage extends StatefulWidget {
   const ClientesPage({super.key});
@@ -40,8 +40,7 @@ class _ClientesPageState extends State<ClientesPage> {
       floatingActionButton: GradientFloatingActionButtonWidget(
         icon: Icons.add,
         text: 'Novo Cliente',
-        onTap: () =>
-            Navigator.pushNamed(context, '/persistir_cliente').then((value) {
+        onTap: () => Navigator.pushNamed(context, '/persistir_cliente').then((value) {
           if (value != null) {
             setState(() {});
           }
@@ -78,20 +77,8 @@ class _ClientesPageState extends State<ClientesPage> {
                         return Center(child: Text(snapshot.error.toString()));
                       }
 
-                      if (!snapshot.hasData ||
-                          snapshot.hasData && snapshot.data!.isEmpty) {
-                        return const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.clear,
-                              size: 40,
-                            ),
-                            SizedBox(height: 10),
-                            Text('Não há dados para exibir.'),
-                          ],
-                        );
+                      if (!snapshot.hasData || snapshot.hasData && snapshot.data!.isEmpty) {
+                        return const Center(child: Text('Não há dados para exibir.'));
                       }
 
                       return SingleChildScrollView(
@@ -107,11 +94,9 @@ class _ClientesPageState extends State<ClientesPage> {
                                 return CardWidget(
                                   title: Container(
                                     margin: const EdgeInsets.only(right: 15),
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10),
+                                    padding: const EdgeInsets.symmetric(vertical: 10),
                                     child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
                                         Text(
@@ -121,7 +106,10 @@ class _ClientesPageState extends State<ClientesPage> {
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                        Text('Conta: ${cliente.conta!}'),
+                                        Visibility(
+                                          visible: cliente.conta != null,
+                                          child: Text('Conta: ${cliente.conta ?? ''}'),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -170,9 +158,7 @@ class _ClientesPageState extends State<ClientesPage> {
 
     if (pesquisa == '') return clientes;
     return clientes
-        .where((element) =>
-            element.nome!.contains(pesquisa) ||
-            element.conta!.toString().contains(pesquisa))
+        .where((element) => element.nome!.contains(pesquisa) || element.conta!.toString().contains(pesquisa))
         .toList();
   }
 }

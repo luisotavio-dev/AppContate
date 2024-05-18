@@ -1,14 +1,13 @@
 import 'package:date_field/date_field.dart';
-import 'package:drop_down_list/drop_down_list.dart';
-import 'package:drop_down_list/model/selected_list_item.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:lancamento_contatos/theme.dart';
 import 'package:lancamento_contatos/globals.dart';
 import 'package:lancamento_contatos/model/atendimento_model.dart';
 import 'package:lancamento_contatos/model/cliente_model.dart';
-import 'package:lancamento_contatos/view/widget/button_widget.dart';
-import 'package:lancamento_contatos/view/widget/text_field_widget.dart';
+import 'package:lancamento_contatos/util/pesquisar_cliente.dart';
+import 'package:lancamento_contatos/view/widgets/button_widget.dart';
+import 'package:lancamento_contatos/view/widgets/text_field_widget.dart';
 
 import '../../util.dart';
 
@@ -85,7 +84,7 @@ class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
                       Padding(
                         padding: EdgeInsets.only(bottom: size.height * 0.01),
                         child: const Text(
-                          'Data de Lançamento:',
+                          'Data:',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -96,8 +95,7 @@ class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
                             height: size.height * 0.06,
                             decoration: const BoxDecoration(
                               color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15)),
+                              borderRadius: BorderRadius.all(Radius.circular(8)),
                             ),
                             child: DateTimeFormField(
                               decoration: const InputDecoration(
@@ -105,7 +103,7 @@ class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
                                 hintStyle: TextStyle(color: Color(0xffADA4A5)),
                                 border: InputBorder.none,
                                 contentPadding: EdgeInsets.only(top: 17),
-                                hintText: 'Data de Lançamento',
+                                hintText: 'Data do Atendimento',
                                 prefixIcon: Padding(
                                   padding: EdgeInsets.only(top: 10),
                                   child: Icon(
@@ -114,18 +112,16 @@ class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
                                   ),
                                 ),
                               ),
-                              firstDate:
-                                  DateTime.now().add(const Duration(days: -7)),
+                              firstDate: DateTime.now().add(const Duration(days: -7)),
                               initialValue: DateTime.now(),
-                              lastDate:
-                                  DateTime.now().add(const Duration(days: 365)),
+                              lastDate: DateTime.now().add(const Duration(days: 365)),
                               initialPickerDateTime: DateTime.now(),
                               autovalidateMode: AutovalidateMode.disabled,
                               dateFormat: dateTimeFormatter,
                               validator: (valuename) {
                                 if (valuename == null) {
                                   Util.buildSnackMessage(
-                                    'Informe uma data de lançamento',
+                                    'Informe a data',
                                     context,
                                   );
                                   return '';
@@ -162,7 +158,15 @@ class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
                             return null;
                           },
                           readOnly: true,
-                          onTap: () => _abrirPesquisaClientes(),
+                          onTap: () => abrirPesquisaClientes(
+                            context: context,
+                            selectedItems: (value) {
+                              setState(() {
+                                _clienteController.text = value[0].name;
+                                idClienteSelecionado = value[0].value.toString();
+                              });
+                            },
+                          ),
                           controller: _clienteController,
                           size: size,
                           icon: Icons.person_outlined,
@@ -205,7 +209,7 @@ class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
                         child: Container(
                           decoration: const BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
                           ),
                           child: CheckboxListTile(
                             value: atendeu,
@@ -237,8 +241,7 @@ class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
                         onPressed: () async {
                           if (_clienteKey.currentState!.validate()) {
                             if (_descricaoKey.currentState!.validate()) {
-                              _salvar(atendimentoEdicao: atendimentoEdicao)
-                                  .then((atendimentoSalvo) {
+                              _salvar(atendimentoEdicao: atendimentoEdicao).then((atendimentoSalvo) {
                                 Util.buildSnackMessage(
                                   'Atendimento ${atendimentoEdicao != null ? 'Editado' : 'Inserido'}',
                                   context,
@@ -282,58 +285,11 @@ class _NovoAtendimentoPageState extends State<NovoAtendimentoPage> {
     }
   }
 
-  _abrirPesquisaClientes() {
-    try {
-      // Pesquisa os clientes cadastrados
-      List<SelectedListItem> clientes = [];
-      Box<Cliente> box = Hive.box<Cliente>('clientes');
-
-      // Constrói os itens do combobox
-      for (var i = 0; i < box.length; i++) {
-        SelectedListItem item = SelectedListItem(
-          name: '${box.getAt(i)!.nome!} - Conta ${box.getAt(i)!.conta!}',
-          value: box.getAt(i)!.idCliente!,
-        );
-        clientes.add(item);
-      }
-
-      clientes.sort((a, b) => a.name.compareTo(b.name));
-
-      DropDownState(
-        DropDown(
-          dropDownBackgroundColor: backgroundColor,
-          bottomSheetTitle: const Text(
-            'Pesquisar Cliente',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20.0,
-            ),
-          ),
-          data: clientes,
-          selectedItems: (value) {
-            setState(() {
-              _clienteController.text = value[0].name;
-              idClienteSelecionado = value[0].value.toString();
-            });
-          },
-          enableMultipleSelection: false,
-        ),
-      ).showModal(context);
-    } catch (e) {
-      Util.buildSnackMessage(
-        e.toString(),
-        context,
-      );
-    }
-  }
-
   Future _salvar({Atendimento? atendimentoEdicao}) async {
     var box = Hive.box<Atendimento>('atendimentos');
 
-    var dadosCliente = Hive.box<Cliente>('clientes')
-        .values
-        .where((element) => element.idCliente == idClienteSelecionado)
-        .toList();
+    var dadosCliente =
+        Hive.box<Cliente>('clientes').values.where((element) => element.idCliente == idClienteSelecionado).toList();
     Cliente cliente = dadosCliente[0];
 
     Atendimento atendimento = Atendimento();

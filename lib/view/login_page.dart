@@ -2,10 +2,10 @@ import 'package:hive/hive.dart';
 import 'package:lancamento_contatos/theme.dart';
 import 'package:lancamento_contatos/globals.dart';
 import 'package:lancamento_contatos/model/usuario_model.dart';
-import 'package:lancamento_contatos/view/widget/app_logo_widget.dart';
-import 'package:lancamento_contatos/view/widget/button_widget.dart';
+import 'package:lancamento_contatos/view/widgets/app_logo_widget.dart';
+import 'package:lancamento_contatos/view/widgets/button_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:lancamento_contatos/view/widget/text_field_widget.dart';
+import 'package:lancamento_contatos/view/widgets/text_field_widget.dart';
 import 'package:uuid/uuid.dart';
 
 import '../util.dart';

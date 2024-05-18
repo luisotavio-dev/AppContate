@@ -5,8 +5,8 @@ import 'package:lancamento_contatos/globals.dart';
 import 'package:lancamento_contatos/model/agendamento_model.dart';
 import 'package:lancamento_contatos/theme.dart';
 import 'package:lancamento_contatos/view/agendamentos/persistir_agendamento_page.dart';
-import 'package:lancamento_contatos/view/widget/card_widget.dart';
-import 'package:lancamento_contatos/view/widget/gradient_floating_action_button_widget.dart';
+import 'package:lancamento_contatos/view/widgets/card_widget.dart';
+import 'package:lancamento_contatos/view/widgets/gradient_floating_action_button_widget.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class AgendamentosPage extends StatefulWidget {
@@ -41,8 +41,7 @@ class _AgendamentosPageState extends State<AgendamentosPage> {
   }
 
   Future<List<Agendamento>> getEvents({bool apenasAtualizar = false}) async {
-    List<Agendamento> events =
-        Hive.box<Agendamento>('agendamentos').values.toList();
+    List<Agendamento> events = Hive.box<Agendamento>('agendamentos').values.toList();
     setState(() {
       _allEvents = events;
       _selectedDay = _focusedDay;
@@ -79,8 +78,7 @@ class _AgendamentosPageState extends State<AgendamentosPage> {
         icon: Icons.add,
         text: 'Novo Agendamento',
         onTap: () {
-          ParametrosPersistirAgendamento parametros =
-              ParametrosPersistirAgendamento()..dataSugerida = _selectedDay!;
+          ParametrosPersistirAgendamento parametros = ParametrosPersistirAgendamento()..dataSugerida = _selectedDay!;
 
           Navigator.pushNamed(
             context,
@@ -118,12 +116,10 @@ class _AgendamentosPageState extends State<AgendamentosPage> {
                   eventLoader: _getEventsForDay,
                   focusedDay: _focusedDay,
                   selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-                  firstDay:
-                      DateTime(_today.year, _today.month - 12, _today.day),
+                  firstDay: DateTime(_today.year, _today.month - 12, _today.day),
                   lastDay: DateTime(_today.year, _today.month + 12, _today.day),
                   calendarStyle: CalendarStyle(
-                    weekendTextStyle: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary),
+                    weekendTextStyle: TextStyle(color: Theme.of(context).colorScheme.secondary),
                     holidayTextStyle: const TextStyle(color: Colors.deepOrange),
                     canMarkersOverflow: false,
                     markerDecoration: BoxDecoration(
@@ -175,19 +171,7 @@ class _AgendamentosPageState extends State<AgendamentosPage> {
                     valueListenable: _selectedEvents,
                     builder: (context, eventos, _) {
                       if (eventos.isEmpty) {
-                        return const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.event,
-                              size: 40,
-                              color: Colors.black87,
-                            ),
-                            SizedBox(height: 10),
-                            Text('Nenhum agendamento encontrado.'),
-                          ],
-                        );
+                        return const Center(child: Text('Nenhum agendamento encontrado.'));
                       }
 
                       return ListView.builder(
@@ -204,13 +188,11 @@ class _AgendamentosPageState extends State<AgendamentosPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
                                       Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             agendamento.cliente!.nome!,
@@ -219,18 +201,17 @@ class _AgendamentosPageState extends State<AgendamentosPage> {
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                          Text(
-                                            'Conta: ${agendamento.cliente!.conta!}',
-                                            style: const TextStyle(
-                                                color: Colors.grey),
-                                          ),
+                                          agendamento.cliente!.conta != null
+                                              ? Text(
+                                                  'Conta: ${agendamento.cliente!.conta}',
+                                                  style: const TextStyle(color: Colors.grey),
+                                                )
+                                              : const SizedBox(),
                                         ],
                                       ),
                                       Text(
-                                        dateTimeFormatter.format(
-                                            agendamento.dataAgendamento!),
-                                        style:
-                                            const TextStyle(color: Colors.grey),
+                                        dateTimeFormatter.format(agendamento.dataAgendamento!),
+                                        style: const TextStyle(color: Colors.grey),
                                       ),
                                     ],
                                   ),
@@ -245,8 +226,7 @@ class _AgendamentosPageState extends State<AgendamentosPage> {
                                 '/detalhes_agendamento',
                                 arguments: agendamento,
                               ).then((value) {
-                                _getEventsFuture =
-                                    getEvents(apenasAtualizar: true);
+                                _getEventsFuture = getEvents(apenasAtualizar: true);
                               });
                             },
                           );

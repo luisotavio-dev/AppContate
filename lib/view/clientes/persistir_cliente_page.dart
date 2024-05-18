@@ -5,8 +5,8 @@ import 'package:hive/hive.dart';
 import 'package:lancamento_contatos/theme.dart';
 import 'package:lancamento_contatos/globals.dart';
 import 'package:lancamento_contatos/model/cliente_model.dart';
-import 'package:lancamento_contatos/view/widget/button_widget.dart';
-import 'package:lancamento_contatos/view/widget/text_field_widget.dart';
+import 'package:lancamento_contatos/view/widgets/button_widget.dart';
+import 'package:lancamento_contatos/view/widgets/text_field_widget.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../util.dart';
@@ -108,37 +108,37 @@ class _PersistirClientePageState extends State<PersistirClientePage> {
                             formKey: _nomeKey,
                           ),
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(bottom: size.height * 0.01),
-                          child: const Text(
-                            'Dados da conta:',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Form(
-                          child: TextFieldWidget(
-                            hintText: 'Conta',
-                            controller: _contaController,
-                            validator: (valuename) {
-                              if (valuename.length <= 0) {
-                                Util.buildSnackMessage(
-                                  'Informe a conta',
-                                  context,
-                                );
-                                return '';
-                              }
-                              return null;
-                            },
-                            size: size,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                            ],
-                            icon: Icons.account_balance_wallet_outlined,
-                            password: false,
-                            formKey: _contaKey,
-                          ),
-                        ),
+                        // Padding(
+                        //   padding: EdgeInsets.only(bottom: size.height * 0.01),
+                        //   child: const Text(
+                        //     'Dados da conta bancária:',
+                        //     style: TextStyle(fontWeight: FontWeight.bold),
+                        //   ),
+                        // ),
+                        // Form(
+                        //   child: TextFieldWidget(
+                        //     hintText: 'Conta',
+                        //     controller: _contaController,
+                        //     validator: (valuename) {
+                        //       if (valuename.length <= 0) {
+                        //         Util.buildSnackMessage(
+                        //           'Informe a conta',
+                        //           context,
+                        //         );
+                        //         return '';
+                        //       }
+                        //       return null;
+                        //     },
+                        //     size: size,
+                        //     keyboardType: TextInputType.number,
+                        //     inputFormatters: [
+                        //       FilteringTextInputFormatter.digitsOnly,
+                        //     ],
+                        //     icon: Icons.account_balance_wallet_outlined,
+                        //     password: false,
+                        //     formKey: _contaKey,
+                        //   ),
+                        // ),
                         Padding(
                           padding: EdgeInsets.only(bottom: size.height * 0.01),
                           child: const Text(
@@ -274,7 +274,7 @@ class _PersistirClientePageState extends State<PersistirClientePage> {
                         ],
                         onPressed: () async {
                           if (_nomeKey.currentState!.validate()) {
-                            if (_contaKey.currentState!.validate()) {
+                            if ((_contaKey.currentState == null) || (_contaKey.currentState!.validate())) {
                               if (_telefonePrincipalKey.currentState!.validate()) {
                                 if (_telefoneAlternativoKey.currentState!.validate()) {
                                   _salvar(clienteEdicao: clienteEdicao).then((clienteSalvo) {
@@ -312,16 +312,20 @@ class _PersistirClientePageState extends State<PersistirClientePage> {
   Future _carregarDados() async {
     if (clienteEdicao != null) {
       _nomeController.text = clienteEdicao!.nome!;
-      _contaController.text = clienteEdicao!.conta!.toString();
+      if (clienteEdicao?.conta != null) {
+        _contaController.text = clienteEdicao!.conta!.toString();
+      }
       _telefonePrincipalController.text = UtilBrasilFields.obterTelefone(clienteEdicao!.telefone1!);
-      _telefoneAlternativoController.text = clienteEdicao!.telefone2 != null && clienteEdicao!.telefone2!.isNotEmpty ? UtilBrasilFields.obterTelefone(clienteEdicao!.telefone2!) : '';
+      _telefoneAlternativoController.text = clienteEdicao!.telefone2 != null && clienteEdicao!.telefone2!.isNotEmpty
+          ? UtilBrasilFields.obterTelefone(clienteEdicao!.telefone2!)
+          : '';
       _observacoesController.text = clienteEdicao!.observacoes ?? '';
     }
   }
 
   Future<Cliente> _salvar({Cliente? clienteEdicao}) async {
     Box<Cliente> box = Hive.box<Cliente>('clientes');
-    int contaInformada = int.parse(_contaController.text);
+    int? contaInformada = int.tryParse(_contaController.text);
 
     Cliente cliente = Cliente();
 
@@ -331,11 +335,13 @@ class _PersistirClientePageState extends State<PersistirClientePage> {
       bool contaJaCadastrada = false;
       String nomeUsuarioRepetido = '';
 
-      for (var i = 0; i < box.length; i++) {
-        if (box.getAt(i)!.conta == contaInformada) {
-          contaJaCadastrada = true;
-          nomeUsuarioRepetido = box.getAt(i)!.nome!;
-          i = box.length;
+      if (contaInformada != null) {
+        for (var i = 0; i < box.length; i++) {
+          if (box.getAt(i)!.conta == contaInformada) {
+            contaJaCadastrada = true;
+            nomeUsuarioRepetido = box.getAt(i)!.nome!;
+            i = box.length;
+          }
         }
       }
 
